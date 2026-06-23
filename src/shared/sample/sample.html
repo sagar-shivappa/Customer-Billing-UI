@@ -1,0 +1,142 @@
+<h1>Angular Material Test</h1>
+
+<button mat-raised-button color="primary">Primary Button</button>
+
+<button mat-raised-button color="accent">Accent Button</button>
+
+<button mat-stroked-button color="warn">Delete</button>save
+
+<!-- Toolbar -->
+<mat-toolbar color="primary"> Customer Billing Dashboard </mat-toolbar>
+
+<!-- Buttons -->
+<h2>Buttons</h2>
+
+<button mat-raised-button color="primary">Save</button>
+
+<button mat-raised-button color="warn">Delete</button>
+
+<button mat-icon-button>
+  <mat-icon>home</mat-icon>
+</button>
+
+<!-- Card -->
+<mat-card>
+  <mat-card-header>
+    <mat-card-title> Customer Details </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content> Material Card Example </mat-card-content>
+</mat-card>
+
+<!-- Forms -->
+
+<h2>Forms</h2>
+
+<mat-form-field appearance="outline">
+  <mat-label> Customer Name </mat-label>
+
+  <input matInput />
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label> Country </mat-label>
+
+  <mat-select>
+    <mat-option value="india"> India </mat-option>
+
+    <mat-option value="usa"> USA </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-checkbox> Active Customer </mat-checkbox>
+
+<mat-radio-group>
+  <mat-radio-button value="yes"> Yes </mat-radio-button>
+
+  <mat-radio-button value="no"> No </mat-radio-button>
+</mat-radio-group>
+
+<mat-slide-toggle> Enable Notifications </mat-slide-toggle>
+
+<mat-form-field>
+  <mat-label> Billing Date </mat-label>
+
+  <input matInput [matDatepicker]="picker" />
+
+  <mat-datepicker-toggle matIconSuffix [for]="picker"> </mat-datepicker-toggle>
+
+  <mat-datepicker #picker> </mat-datepicker>
+</mat-form-field>
+
+<!-- Table -->
+
+<h2>Table</h2>
+
+<table mat-table [dataSource]="data">
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+
+    <td mat-cell *matCellDef="let row">
+      {{ row.id }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+
+    <td mat-cell *matCellDef="let row">
+      {{ row.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="amount">
+    <th mat-header-cell *matHeaderCellDef>Amount</th>
+
+    <td mat-cell *matCellDef="let row">
+      {{ row.amount }}
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<!-- Navigation -->
+
+<h2>Navigation</h2>
+
+<button mat-button [matMenuTriggerFor]="menu">Menu</button>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>Profile</button>
+
+  <button mat-menu-item>Logout</button>
+</mat-menu>
+
+<mat-tab-group>
+  <mat-tab label="Tab 1"> Content 1 </mat-tab>
+
+  <mat-tab label="Tab 2"> Content 2 </mat-tab>
+</mat-tab-group>
+
+<!-- Feedback -->
+
+<h2>Feedback</h2>
+
+<mat-progress-spinner mode="indeterminate"> </mat-progress-spinner>
+
+<mat-progress-bar mode="determinate" value="70"> </mat-progress-bar>
+
+<mat-chip> Paid </mat-chip>
+
+<button mat-raised-button matTooltip="Tooltip example">Hover me</button>
+
+<!-- Expansion -->
+
+<mat-expansion-panel>
+  <mat-expansion-panel-header> Details </mat-expansion-panel-header>
+
+  More information here.
+</mat-expansion-panel>

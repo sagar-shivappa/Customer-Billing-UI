@@ -1,0 +1,17 @@
+header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  height: 64px;
+  background: #1976d2;
+  color: white;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 24px;
+}
