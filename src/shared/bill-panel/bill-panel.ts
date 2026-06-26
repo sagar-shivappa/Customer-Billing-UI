@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-bill-panel',
@@ -6,4 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './bill-panel.html',
   styleUrl: './bill-panel.css',
 })
-export class BillPanel {}
+export class BillPanel {
+  readonly products = inject(ProductService).products;
+}

@@ -1,7 +1,13 @@
-<h3>Current Bill</h3>
+<h3>Products</h3>
 
-<p>No items added.</p>
+@for (product of products(); track product.productCode) {
+  <div class="item">
+    <div>{{ product.productName }}</div>
 
-<hr />
+    <div>{{ product.productCode }}</div>
 
-<div>Total : ₹0.00</div>
+    <div>₹{{ product.price }}</div>
+  </div>
+} @empty {
+  <p>No products added.</p>
+}

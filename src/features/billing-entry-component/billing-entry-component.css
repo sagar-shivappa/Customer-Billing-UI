@@ -1,0 +1,59 @@
+.billing-card {
+  margin-bottom: 1rem;
+}
+
+.billing-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+mat-form-field:first-child {
+  flex: 1;
+  min-width: 300px;
+}
+
+mat-form-field:nth-child(2) {
+  width: 120px;
+}
+
+button {
+  height: 56px;
+}
+
+.products-section {
+  margin-top: 16px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  cursor: pointer;
+  transition: transform 150ms ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+}
+
+.product-code {
+  font-size: 12px;
+  color: grey;
+  margin-bottom: 8px;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.product-price {
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}

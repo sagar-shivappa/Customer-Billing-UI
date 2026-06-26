@@ -1,0 +1,58 @@
+<mat-card class="billing-card">
+  <mat-card-header>
+    <mat-card-title> Add Item </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form class="billing-form" [formGroup]="billingForm" (ngSubmit)="add()">
+      <mat-form-field appearance="outline">
+        <mat-label>Product Code </mat-label>
+
+        <input
+          #productInput
+          matInput
+          formControlName="product"
+          (keydown.enter)="focusQuantity($event)"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Quantity</mat-label>
+
+        <input
+          #quantityInput
+          matInput
+          type="number"
+          formControlName="quantity"
+          (keydown.enter)="submitFromQuantity($event)"
+        />
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="products-section">
+  <mat-card-header>
+    <mat-card-title> Available Products </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="products-grid">
+      @for (product of products(); track product.productCode) {
+        <mat-card class="product-card">
+          <mat-card-content>
+            <div class="product-code">
+              {{ product.productCode }}
+            </div>
+
+            <div class="product-name">
+              {{ product.productName }}
+            </div>
+
+            <div class="product-price">₹{{ product.price }}</div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>

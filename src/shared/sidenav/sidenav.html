@@ -1,7 +1,21 @@
-<nav>
-  <a routerLink="/">Dashboard</a>
+<mat-nav-list>
+  @for (item of menuItems; track item.route) {
+    <a
+      mat-list-item
+      [routerLink]="item.route"
+      routerLinkActive="active-link"
+      #rla="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon matListItemIcon>
+        {{ item.icon }}
+      </mat-icon>
 
-  <a routerLink="/users">Users</a>
-
-  <a routerLink="/settings">Settings</a>
-</nav>
+      @if (!collapsed()) {
+        <span matListItemTitle>
+          {{ item.label }}
+        </span>
+      }
+    </a>
+  }
+</mat-nav-list>
