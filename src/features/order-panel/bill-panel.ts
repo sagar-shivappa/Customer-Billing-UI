@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ProductService } from '../../services/product.service';
+import { BillingService } from '../../services/billing.service';
 
 @Component({
   selector: 'app-bill-panel',
@@ -8,5 +8,6 @@ import { ProductService } from '../../services/product.service';
   styleUrl: './bill-panel.css',
 })
 export class BillPanel {
-  readonly products = inject(ProductService).products;
+  private readonly billingService = inject(BillingService);
+  readonly orderSummary = this.billingService.orderSummary;
 }

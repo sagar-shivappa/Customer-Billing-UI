@@ -6,13 +6,13 @@
 
 .main-content {
   display: grid;
-  grid-template-columns: 150px 1fr 350px;
+  grid-template-columns: 70px 1fr 450px;
   transition: grid-template-columns 250ms ease;
   overflow: hidden;
 }
 
 .main-content.collapsed {
-  grid-template-columns: 72px 1fr 350px;
+  grid-template-columns: 0px 1fr 450px;
 }
 
 .content {

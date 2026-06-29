@@ -8,13 +8,13 @@
 }
 
 .active-link {
-  background-color: rgba(63, 81, 181, 0.12);
+  background-color: rgba(38, 59, 182, 0.12);
   border-right: 4px solid var(--mat-sys-primary);
   border-radius: 0;
 }
 
 a[mat-list-item] {
-  margin: 4px 8px;
+  margin: 5px;
   border-radius: 8px;
   transition: all 150ms ease-in-out;
 }

@@ -1,0 +1,33 @@
+<h3>Available Products</h3>
+<mat-card class="search-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label> Search Product </mat-label>
+
+    <input
+      matInput
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event)"
+      placeholder="Name or Code"
+    />
+
+    <mat-icon matSuffix> search </mat-icon>
+  </mat-form-field>
+</mat-card>
+
+<div class="products-grid">
+  @for (product of filteredProducts(); track product.productCode) {
+    <mat-card class="product-card">
+      <mat-card-content>
+        <div class="product-name">
+          {{ product.productName }}
+        </div>
+
+        <div class="product-code">
+          {{ product.productCode }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+  } @empty {
+    <div class="empty-state">No products found.</div>
+  }
+</div>

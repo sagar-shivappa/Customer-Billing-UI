@@ -3,7 +3,7 @@ import { Header } from '../header/header';
 import { Sidenav } from '../sidenav/sidenav';
 import { Footer } from '../footer/footer';
 import { RouterOutlet } from '@angular/router';
-import { BillPanel } from '../bill-panel/bill-panel';
+import { BillPanel } from '../../features/order-panel/bill-panel';
 
 @Component({
   selector: 'app-home',

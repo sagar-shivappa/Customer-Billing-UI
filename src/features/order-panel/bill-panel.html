@@ -1,0 +1,16 @@
+<h3>Order</h3>
+Total Bill : {{ orderSummary().totalAmount }}
+@for (item of orderSummary().items; track item.productCode) {
+  <div class="bill-item">
+    <div>
+      {{ item.productName }}
+    </div>
+
+    <div>
+      {{ item.quantity }}
+      × ₹{{ item.unitPrice }}
+    </div>
+
+    <div>₹{{ item.totalPrice }}</div>
+  </div>
+}

@@ -8,21 +8,37 @@
       <div class="form-grid">
         <mat-form-field appearance="outline">
           <mat-label>Product Name</mat-label>
-          <input matInput formControlName="productName" />
+          <input
+            #productNameInput
+            matInput
+            formControlName="productName"
+            (keydown.enter)="focusProductCode($event)"
+          />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Product Code</mat-label>
-          <input matInput formControlName="productCode" />
+          <input
+            #productCodeInput
+            matInput
+            formControlName="productCode"
+            (keydown.enter)="focusPrice($event)"
+          />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Price</mat-label>
-          <input matInput type="number" formControlName="price" />
+          <input
+            #priceInput
+            matInput
+            type="number"
+            formControlName="price"
+            (keydown.enter)="submitFromPrice($event)"
+          />
         </mat-form-field>
       </div>
-
-      <button class="actions" mat-raised-button color="primary" type="submit">Add Product</button>
     </form>
   </mat-card-content>
 </mat-card>
+
+<app-product-catalog></app-product-catalog>

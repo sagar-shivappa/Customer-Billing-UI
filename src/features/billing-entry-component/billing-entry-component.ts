@@ -6,6 +6,9 @@ import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/fo
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { ProductService } from '../../services/product.service';
+import { ProductCatalogComponent } from '../product-catalog-component/product-catalog-component';
+import { BillingService } from '../../services/billing.service';
+import { Item } from '../../models/bill.model';
 
 @Component({
   selector: 'app-billing-entry',
@@ -22,6 +25,7 @@ import { ProductService } from '../../services/product.service';
     MatInputModule,
     MatButtonModule,
     MatTableModule,
+    ProductCatalogComponent,
   ],
   templateUrl: './billing-entry-component.html',
   styleUrl: './billing-entry-component.css',
@@ -29,10 +33,11 @@ import { ProductService } from '../../services/product.service';
 export class BillingEntryComponent implements AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly productService = inject(ProductService);
+  private readonly billingService = inject(BillingService);
   readonly products = this.productService.products;
 
   readonly billingForm = this.fb.nonNullable.group({
-    product: ['', Validators.required],
+    productCode: ['', Validators.required],
     quantity: [1, [Validators.required, Validators.min(1)]],
   });
 
@@ -49,10 +54,10 @@ export class BillingEntryComponent implements AfterViewInit {
       return;
     }
 
-    // Add item logic
+    this.billingService.addItem(this.billingForm.value as Item);
 
     this.billingForm.reset({
-      product: '',
+      productCode: '',
       quantity: 1,
     });
 
