@@ -15,7 +15,7 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
   {
     label: 'Customers',
     icon: 'people',
-    route: '/customers',
+    route: '/profile',
   },
   {
     label: 'Settings',

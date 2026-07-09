@@ -22,8 +22,20 @@
             #productCodeInput
             matInput
             formControlName="productCode"
-            (keydown.enter)="focusPrice($event)"
+            (keydown.enter)="focusCategory($event)"
           />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+
+          <mat-select #categoryInput formControlName="category" (selectionChange)="focusPrice()">
+            @for (category of categories; track category) {
+              <mat-option [value]="category">
+                {{ category }}
+              </mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">

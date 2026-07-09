@@ -7,6 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ProductCatalogComponent } from '../product-catalog-component/product-catalog-component';
+import { PRODUCT_CATEGORIES } from '../../app/core/config/product.categories.config';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-add-product',
@@ -18,6 +20,7 @@ import { ProductCatalogComponent } from '../product-catalog-component/product-ca
     MatInputModule,
     MatButtonModule,
     ProductCatalogComponent,
+    MatSelectModule,
   ],
   templateUrl: './add-product-component.html',
   styleUrl: './add-product-component.css',
@@ -25,16 +28,20 @@ import { ProductCatalogComponent } from '../product-catalog-component/product-ca
 export class AddProductComponent implements AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly productService = inject(ProductService);
+  readonly categories = PRODUCT_CATEGORIES;
 
   readonly productForm = this.fb.nonNullable.group({
     productName: ['', Validators.required],
     productCode: ['', Validators.required],
+    category: ['', Validators.required],
     price: [0, [Validators.required, Validators.min(1)]],
   });
 
   readonly productNameInput = viewChild<ElementRef<HTMLInputElement>>('productNameInput');
 
   readonly productCodeInput = viewChild<ElementRef<HTMLInputElement>>('productCodeInput');
+
+  readonly categoryInput = viewChild(MatSelect);
 
   readonly priceInput = viewChild<ElementRef<HTMLInputElement>>('priceInput');
 
@@ -48,11 +55,16 @@ export class AddProductComponent implements AfterViewInit {
     this.productCodeInput()?.nativeElement.focus();
   }
 
-  focusPrice(event: Event): void {
+  focusCategory(event: Event): void {
     event.preventDefault();
+    this.categoryInput()?.open();
+  }
 
-    this.priceInput()?.nativeElement.focus();
-    this.priceInput()?.nativeElement.select();
+  focusPrice(): void {
+    requestAnimationFrame(() => {
+      this.priceInput()?.nativeElement.focus();
+      this.priceInput()?.nativeElement.select();
+    });
   }
 
   submitFromPrice(event: Event): void {
@@ -71,6 +83,7 @@ export class AddProductComponent implements AfterViewInit {
     this.productForm.reset({
       productName: '',
       productCode: '',
+      category: '',
       price: 0,
     });
 
