@@ -1,9 +1,1 @@
-export const PRODUCT_CATEGORIES = [
-  'Dairy',
-  'Bakery',
-  'Beverages',
-  'Snacks',
-  'Fruits',
-  'Vegetables',
-  'Groceries',
-];
+export const PRODUCT_CATEGORIES = ['South Indian', 'North Indian', 'Chinese', 'Drinks'];

@@ -13,7 +13,24 @@
     <mat-icon matSuffix> search </mat-icon>
   </mat-form-field>
 </mat-card>
+<div class="category-list">
+  <button
+    [matButton]="selectedCategory() === 'All' ? 'filled' : 'outlined'"
+    [class.selected]="selectedCategory() === 'All'"
+    (click)="selectCategory('All')"
+  >
+    All
+  </button>
 
+  @for (category of productCategories; track category) {
+    <button
+      [matButton]="selectedCategory() === category ? 'filled' : 'outlined'"
+      (click)="selectCategory(category)"
+    >
+      {{ category }}
+    </button>
+  }
+</div>
 <div class="products-grid">
   @for (product of filteredProducts(); track product.productCode) {
     <mat-card class="product-card">
