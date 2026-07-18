@@ -1,18 +1,18 @@
 <h3>Available Products</h3>
-<mat-card class="search-card">
-  <mat-form-field appearance="outline" class="search-field">
-    <mat-label> Search Product </mat-label>
 
-    <input
-      matInput
-      [ngModel]="search()"
-      (ngModelChange)="search.set($event)"
-      placeholder="Name or Code"
-    />
+<mat-form-field appearance="outline" class="search-field">
+  <mat-label> Search Product </mat-label>
 
-    <mat-icon matSuffix> search </mat-icon>
-  </mat-form-field>
-</mat-card>
+  <input
+    matInput
+    [ngModel]="search()"
+    (ngModelChange)="search.set($event)"
+    placeholder="Name or Code"
+  />
+
+  <mat-icon matSuffix> search </mat-icon>
+</mat-form-field>
+
 <div class="category-list">
   <button
     [matButton]="selectedCategory() === 'All' ? 'filled' : 'outlined'"

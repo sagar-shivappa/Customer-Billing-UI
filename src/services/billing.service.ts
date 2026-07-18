@@ -50,7 +50,7 @@ export class BillingService {
         continue;
       }
 
-      const itemTotal = product.price * item.quantity;
+      const itemTotal = (item.unitPrice ?? product.price) * item.quantity;
 
       totalAmount += itemTotal;
 
@@ -58,7 +58,7 @@ export class BillingService {
         productCode: product.productCode,
         productName: product.productName,
         quantity: item.quantity,
-        unitPrice: product.price,
+        unitPrice: item.unitPrice ?? product.price,
         totalPrice: itemTotal,
       });
     }
@@ -68,4 +68,39 @@ export class BillingService {
       totalAmount,
     };
   });
+
+  updateQuantity(productCode: string, quantity: number): void {
+    this._orderedItems.update((items) =>
+      items.map((item) =>
+        item.productCode === productCode
+          ? {
+              ...item,
+              quantity: Math.max(1, quantity),
+            }
+          : item,
+      ),
+    );
+  }
+
+  updateUnitPrice(productCode: string, unitPrice: number): void {
+    this._orderedItems.update((items) =>
+      items.map((item) =>
+        item.productCode === productCode
+          ? {
+              ...item,
+              unitPrice: Math.max(0, unitPrice),
+            }
+          : item,
+      ),
+    );
+    console.log(this._orderedItems());
+  }
+
+  clearOrder(): void {
+    this._orderedItems.set([]);
+  }
+
+  removeItem(productCode: string) {
+    this._orderedItems.update((items) => items.filter((item) => item.productCode !== productCode));
+  }
 }

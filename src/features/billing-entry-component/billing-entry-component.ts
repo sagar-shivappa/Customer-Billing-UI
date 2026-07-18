@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
@@ -16,8 +16,6 @@ import { Item } from '../../models/bill.model';
   imports: [
     ReactiveFormsModule,
     MatCard,
-    MatCardHeader,
-    MatCardTitle,
     MatCardContent,
     MatFormField,
     MatLabel,

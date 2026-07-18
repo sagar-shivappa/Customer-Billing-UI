@@ -2,3 +2,27 @@
   display: flex;
   gap: 5px;
 }
+
+.order-table {
+  width: 100%;
+}
+
+.prdName-field {
+  max-width: 80px;
+}
+
+.qty-field {
+  width: 80px;
+}
+
+.price-field {
+  width: 80px;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px;
+  font-weight: 600;
+  align-items: center;
+}

@@ -1,16 +1,67 @@
-<h3>Order</h3>
-Total Bill : {{ orderSummary().totalAmount }}
-@for (item of orderSummary().items; track item.productCode) {
-  <div class="bill-item">
-    <div>
+<div class="order-total">
+  <span>Order Summary</span>
+  <span> Total : ₹{{ orderSummary().totalAmount }} </span>
+  <button matButton="elevated" (click)="clearOrder()">Clear</button>
+</div>
+
+<table mat-table [dataSource]="orderSummary().items" class="order-table">
+  <!-- Product -->
+  <ng-container matColumnDef="product">
+    <th mat-header-cell *matHeaderCellDef>Product</th>
+    <td mat-cell *matCellDef="let item" class="prdName-field">
       {{ item.productName }}
-    </div>
+    </td>
+  </ng-container>
 
-    <div>
-      {{ item.quantity }}
-      × ₹{{ item.unitPrice }}
-    </div>
+  <!-- Unit Price -->
+  <ng-container matColumnDef="price">
+    <th mat-header-cell *matHeaderCellDef>Price</th>
+    <td mat-cell *matCellDef="let item">
+      <mat-form-field appearance="outline" class="price-field">
+        <input
+          matInput
+          type="number"
+          min="0"
+          [disabled]="!allowPriceEdit()"
+          [value]="item.unitPrice"
+          (change)="updatePrice(item.productCode, $event)"
+        />
+      </mat-form-field>
+    </td>
+  </ng-container>
 
-    <div>₹{{ item.totalPrice }}</div>
-  </div>
-}
+  <!-- Quantity -->
+  <ng-container matColumnDef="quantity">
+    <th mat-header-cell *matHeaderCellDef>Qty</th>
+    <td mat-cell *matCellDef="let item">
+      <mat-form-field appearance="outline" class="qty-field">
+        <input
+          matInput
+          type="number"
+          min="1"
+          [value]="item.quantity"
+          (change)="updateQuantity(item.productCode, $event)"
+        />
+      </mat-form-field>
+    </td>
+  </ng-container>
+
+  <!-- Total -->
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef>Total</th>
+    <td mat-cell *matCellDef="let item">₹{{ item.totalPrice }}</td>
+  </ng-container>
+
+  <!-- Delete -->
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let item">
+      <button matIconButton="standard" color="warn" (click)="removeItem(item.productCode)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
