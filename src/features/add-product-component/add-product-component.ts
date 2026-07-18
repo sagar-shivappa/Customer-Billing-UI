@@ -1,6 +1,6 @@
 import { Component, inject, AfterViewInit, ElementRef, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-
+import { ViewChild } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -41,7 +41,7 @@ export class AddProductComponent implements AfterViewInit {
 
   readonly productCodeInput = viewChild<ElementRef<HTMLInputElement>>('productCodeInput');
 
-  readonly categoryInput = viewChild(MatSelect);
+  @ViewChild('categoryInput') categoryInput!: MatSelect;
 
   readonly priceInput = viewChild<ElementRef<HTMLInputElement>>('priceInput');
 
@@ -55,11 +55,6 @@ export class AddProductComponent implements AfterViewInit {
     this.productCodeInput()?.nativeElement.focus();
   }
 
-  focusCategory(event: Event): void {
-    event.preventDefault();
-    this.categoryInput()?.open();
-  }
-
   focusPrice(): void {
     requestAnimationFrame(() => {
       this.priceInput()?.nativeElement.focus();
@@ -67,8 +62,17 @@ export class AddProductComponent implements AfterViewInit {
     });
   }
 
-  submitFromPrice(event: Event): void {
-    event.preventDefault();
+  focusCategory(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    keyboardEvent.preventDefault();
+
+    requestAnimationFrame(() => {
+      this.categoryInput?.focus();
+      this.categoryInput?.open();
+    });
+  }
+
+  submitFromCategory(): void {
     this.addProduct();
   }
 

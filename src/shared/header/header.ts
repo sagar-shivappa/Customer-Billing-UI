@@ -1,4 +1,5 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
+import { OwnerProfileService } from '../../services/owner.service';
 
 @Component({
   selector: 'app-header',
@@ -8,4 +9,5 @@ import { Component, output } from '@angular/core';
 })
 export class Header {
   readonly menuClicked = output<void>();
+  readonly ownerService = inject(OwnerProfileService);
 }

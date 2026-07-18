@@ -1,0 +1,76 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title> Owner Profile </mat-card-title>
+  </mat-card-header>
+  <hr />
+  <mat-card-content>
+    <form [formGroup]="profileForm" (ngSubmit)="save()">
+      <div class="form-grid">
+        <!-- Shop Name -->
+        <mat-form-field appearance="outline">
+          <mat-label>Shop Name</mat-label>
+
+          <input
+            matInput
+            formControlName="shopName"
+            placeholder="Enter shop name"
+            autocomplete="organization"
+          />
+
+          @if (profileForm.controls.shopName.hasError('required')) {
+            <mat-error>Shop name is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Address -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Address</mat-label>
+
+          <textarea matInput rows="4" formControlName="address" placeholder="Enter shop address">
+          </textarea>
+
+          @if (profileForm.controls.address.hasError('required')) {
+            <mat-error>Address is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Pincode -->
+        <mat-form-field appearance="outline">
+          <mat-label>Pincode</mat-label>
+
+          <input
+            matInput
+            type="text"
+            maxlength="6"
+            formControlName="pincode"
+            autocomplete="postal-code"
+          />
+
+          <mat-hint align="end"> {{ profileForm.controls.pincode.value.length }}/6 </mat-hint>
+
+          @if (profileForm.controls.pincode.hasError('required')) {
+            <mat-error>Pincode is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- GSTIN -->
+        <mat-form-field appearance="outline">
+          <mat-label>GSTIN</mat-label>
+
+          <input matInput formControlName="gstin" placeholder="Optional" autocomplete="off" />
+        </mat-form-field>
+      </div>
+
+      <div class="button-row">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="profileForm.invalid || profileForm.pristine"
+        >
+          Save Profile
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

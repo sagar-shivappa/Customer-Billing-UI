@@ -4,7 +4,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    <form [formGroup]="productForm" (ngSubmit)="addProduct()">
+    <form [formGroup]="productForm">
       <div class="form-grid">
         <mat-form-field appearance="outline">
           <mat-label>Product Name</mat-label>
@@ -22,20 +22,8 @@
             #productCodeInput
             matInput
             formControlName="productCode"
-            (keydown.enter)="focusCategory($event)"
+            (keydown.enter)="focusPrice()"
           />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Category</mat-label>
-
-          <mat-select #categoryInput formControlName="category" (selectionChange)="focusPrice()">
-            @for (category of categories; track category) {
-              <mat-option [value]="category">
-                {{ category }}
-              </mat-option>
-            }
-          </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -45,9 +33,26 @@
             matInput
             type="number"
             formControlName="price"
-            (keydown.enter)="submitFromPrice($event)"
+            (keydown.enter)="focusCategory($event)"
           />
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+
+          <mat-select
+            #categoryInput
+            formControlName="category"
+            (selectionChange)="submitFromCategory()"
+          >
+            @for (category of categories; track category) {
+              <mat-option [value]="category">
+                {{ category }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <a href="">Category not listed ?</a>
       </div>
     </form>
   </mat-card-content>
