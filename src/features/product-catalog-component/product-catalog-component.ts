@@ -6,6 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
 import { MatButtonModule } from '@angular/material/button';
+import { BillingService } from '../../services/billing.service';
+import { Product } from '../../models/product.model';
 
 @Component({
   selector: 'app-product-catalog',
@@ -23,6 +25,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class ProductCatalogComponent {
   private readonly productService = inject(ProductService);
+  private readonly billingService = inject(BillingService);
 
   readonly products = this.productService.products;
 
@@ -51,4 +54,12 @@ export class ProductCatalogComponent {
       return matchesSearch && matchesCategory;
     });
   });
+
+  addProductToOrder(product: Product): void {
+    this.billingService.addItem({
+      productCode: product.productCode,
+      quantity: 1,
+      unitPrice: product.price,
+    });
+  }
 }

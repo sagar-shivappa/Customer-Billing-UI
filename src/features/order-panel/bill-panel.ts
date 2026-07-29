@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
+import { app_config } from '../../app/core/config/app.config';
 
 @Component({
   selector: 'app-bill-panel',
@@ -23,7 +24,7 @@ import { MatInputModule } from '@angular/material/input';
 export class BillPanel {
   private readonly billingService = inject(BillingService);
   readonly orderSummary = this.billingService.orderSummary;
-  allowPriceEdit = signal(true);
+  allowPriceEdit = app_config.editable_price;
 
   readonly displayedColumns: Array<'product' | 'quantity' | 'price' | 'total' | 'action'> = [
     'product',
