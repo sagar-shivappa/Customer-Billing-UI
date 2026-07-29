@@ -44,16 +44,40 @@
             formControlName="category"
             (selectionChange)="submitFromCategory()"
           >
-            @for (category of categories; track category) {
+            @for (category of categories(); track category) {
               <mat-option [value]="category">
                 {{ category }}
               </mat-option>
             }
           </mat-select>
         </mat-form-field>
-        <a href="">Category not listed ?</a>
+
+        <button
+          type="button"
+          [matButton]="productForm.valid ? 'filled' : 'outlined'"
+          (click)="onAction()"
+        >
+          <mat-icon>
+            {{ productForm.valid ? 'add' : 'delete' }}
+          </mat-icon>
+
+          {{ productForm.valid ? 'Add' : 'Clear' }}
+        </button>
       </div>
     </form>
+    @if (enableNewCategory()) {
+      <button type="button" class="link-button" (click)="enableNewCategory.set(false)">
+        Category not listed ?
+      </button>
+    } @else {
+      <div class="new-category">
+        <mat-form-field appearance="outline">
+          <mat-label>New Category</mat-label>
+          <input matInput [ngModel]="newCategory()" (ngModelChange)="newCategory.set($event)" />
+        </mat-form-field>
+        <button matButton="outlined" (click)="addNewCategory()">Add Category</button>
+      </div>
+    }
   </mat-card-content>
 </mat-card>
 

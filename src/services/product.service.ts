@@ -16,7 +16,7 @@ export class ProductService {
 
   private readonly _productCategories = signal<string[]>([...PRODUCT_CATEGORIES]);
   readonly productCategories = this._productCategories.asReadonly();
-  addProductcategory(category: string): void {
+  addProductCategory(category: string): void {
     this._productCategories.update((productCategories) => [...productCategories, category]);
   }
 }

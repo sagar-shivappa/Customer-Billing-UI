@@ -1,5 +1,5 @@
-import { Component, inject, AfterViewInit, ElementRef, viewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, AfterViewInit, ElementRef, viewChild, signal } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ViewChild } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { MatCardModule } from '@angular/material/card';
@@ -7,8 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ProductCatalogComponent } from '../product-catalog-component/product-catalog-component';
-import { PRODUCT_CATEGORIES } from '../../app/core/config/product.categories.config';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-add-product',
@@ -21,6 +21,8 @@ import { MatSelect, MatSelectModule } from '@angular/material/select';
     MatButtonModule,
     ProductCatalogComponent,
     MatSelectModule,
+    FormsModule,
+    MatIcon,
   ],
   templateUrl: './add-product-component.html',
   styleUrl: './add-product-component.css',
@@ -28,7 +30,6 @@ import { MatSelect, MatSelectModule } from '@angular/material/select';
 export class AddProductComponent implements AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly productService = inject(ProductService);
-  readonly categories = PRODUCT_CATEGORIES;
 
   readonly productForm = this.fb.nonNullable.group({
     productName: ['', Validators.required],
@@ -44,6 +45,11 @@ export class AddProductComponent implements AfterViewInit {
   @ViewChild('categoryInput') categoryInput!: MatSelect;
 
   readonly priceInput = viewChild<ElementRef<HTMLInputElement>>('priceInput');
+
+  readonly categories = this.productService.productCategories;
+
+  enableNewCategory = signal(true);
+  readonly newCategory = signal('');
 
   ngAfterViewInit(): void {
     this.focusProductName();
@@ -84,6 +90,10 @@ export class AddProductComponent implements AfterViewInit {
 
     this.productService.addProduct(this.productForm.getRawValue());
 
+    this.clear();
+  }
+
+  clear() {
     this.productForm.reset({
       productName: '',
       productCode: '',
@@ -94,9 +104,26 @@ export class AddProductComponent implements AfterViewInit {
     this.focusProductName();
   }
 
+  onAction(): void {
+    if (this.productForm.valid) {
+      this.addProduct();
+    } else {
+      this.clear();
+    }
+  }
+
   private focusProductName(): void {
     requestAnimationFrame(() => {
       this.productNameInput()?.nativeElement.focus();
     });
+  }
+
+  addNewCategory() {
+    if (this.newCategory() != '') {
+      this.productService.addProductCategory(this.newCategory());
+    }
+
+    this.enableNewCategory.set(true);
+    this.newCategory.set('');
   }
 }
