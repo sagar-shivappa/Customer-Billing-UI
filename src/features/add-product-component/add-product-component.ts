@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ProductCatalogComponent } from '../product-catalog-component/product-catalog-component';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
+import { uniqueProductCodeValidator } from '../../shared/validators/product-validator';
 
 @Component({
   selector: 'app-add-product',
@@ -33,7 +34,10 @@ export class AddProductComponent implements AfterViewInit {
 
   readonly productForm = this.fb.nonNullable.group({
     productName: ['', Validators.required],
-    productCode: ['', Validators.required],
+    productCode: [
+      '',
+      [Validators.required, uniqueProductCodeValidator(() => this.productService.products())],
+    ],
     category: ['', Validators.required],
     price: [0, [Validators.required, Validators.min(1)]],
   });

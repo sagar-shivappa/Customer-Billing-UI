@@ -23,6 +23,9 @@
             formControlName="productCode"
             (keydown.enter)="focusPrice()"
           />
+          @if (productForm.controls.productCode.hasError('productCodeExists')) {
+            <mat-error> Product code already exists </mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
