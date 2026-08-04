@@ -9,6 +9,7 @@ import { ProductService } from '../../services/product.service';
 import { ProductCatalogComponent } from '../product-catalog-component/product-catalog-component';
 import { BillingService } from '../../services/billing.service';
 import { Item } from '../../models/bill.model';
+import { Product } from '../../models/product.model';
 
 @Component({
   selector: 'app-billing-entry',
@@ -78,5 +79,13 @@ export class BillingEntryComponent implements AfterViewInit {
   submitFromQuantity(event: Event): void {
     event.preventDefault();
     this.add();
+  }
+
+  addProductToOrder(product: Product): void {
+    this.billingService.addItem({
+      productCode: product.productCode,
+      quantity: 1,
+      unitPrice: product.sellingPrice,
+    });
   }
 }

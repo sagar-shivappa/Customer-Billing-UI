@@ -49,7 +49,7 @@ export class BillingService {
         continue;
       }
 
-      const itemTotal = (item.unitPrice ?? product.price) * item.quantity;
+      const itemTotal = (item.unitPrice ?? product.sellingPrice) * item.quantity;
 
       totalAmount += itemTotal;
 
@@ -57,7 +57,7 @@ export class BillingService {
         productCode: product.productCode,
         productName: product.productName,
         quantity: item.quantity,
-        unitPrice: item.unitPrice ?? product.price,
+        unitPrice: item.unitPrice ?? product.sellingPrice,
         totalPrice: itemTotal,
       });
     }

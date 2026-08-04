@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,6 +31,8 @@ export class ProductCatalogComponent {
 
   readonly search = signal('');
 
+  readonly productSelected = output<Product>();
+
   readonly productCategories = this.productService.productCategories();
 
   readonly selectedCategory = signal<string>('All');
@@ -55,11 +57,7 @@ export class ProductCatalogComponent {
     });
   });
 
-  addProductToOrder(product: Product): void {
-    this.billingService.addItem({
-      productCode: product.productCode,
-      quantity: 1,
-      unitPrice: product.price,
-    });
+  selectProduct(product: Product): void {
+    this.productSelected.emit(product);
   }
 }

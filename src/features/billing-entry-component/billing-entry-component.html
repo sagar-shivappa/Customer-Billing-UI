@@ -27,4 +27,4 @@
   </mat-card-content>
 </mat-card>
 
-<app-product-catalog></app-product-catalog>
+<app-product-catalog (productSelected)="addProductToOrder($event)"></app-product-catalog>

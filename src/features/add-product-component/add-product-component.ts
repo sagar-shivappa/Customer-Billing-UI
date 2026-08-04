@@ -10,6 +10,13 @@ import { ProductCatalogComponent } from '../product-catalog-component/product-ca
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
 import { uniqueProductCodeValidator } from '../../shared/validators/product-validator';
+import { Product } from '../../models/product.model';
+import { TitleCasePipe } from '@angular/common';
+
+export enum FormType {
+  New = 'new',
+  Update = 'update',
+}
 
 @Component({
   selector: 'app-add-product',
@@ -24,6 +31,7 @@ import { uniqueProductCodeValidator } from '../../shared/validators/product-vali
     MatSelectModule,
     FormsModule,
     MatIcon,
+    TitleCasePipe,
   ],
   templateUrl: './add-product-component.html',
   styleUrl: './add-product-component.css',
@@ -36,11 +44,21 @@ export class AddProductComponent implements AfterViewInit {
     productName: ['', Validators.required],
     productCode: [
       '',
-      [Validators.required, uniqueProductCodeValidator(() => this.productService.products())],
+      [
+        Validators.required,
+        uniqueProductCodeValidator(
+          () => this.productService.products(),
+          () => this.formType,
+        ),
+      ],
     ],
     category: ['', Validators.required],
-    price: [0, [Validators.required, Validators.min(1)]],
+    purchasePrice: [0, [Validators.min(1)]],
+    sellingPrice: [0, [Validators.required, Validators.min(1)]],
+    stock: [0],
   });
+
+  formType: FormType = FormType.New;
 
   readonly productNameInput = viewChild<ElementRef<HTMLInputElement>>('productNameInput');
 
@@ -48,11 +66,15 @@ export class AddProductComponent implements AfterViewInit {
 
   @ViewChild('categoryInput') categoryInput!: MatSelect;
 
-  readonly priceInput = viewChild<ElementRef<HTMLInputElement>>('priceInput');
+  readonly sellingPrice = viewChild<ElementRef<HTMLInputElement>>('sellingPrice');
+
+  readonly purchasePrice = viewChild<ElementRef<HTMLInputElement>>('purchasePrice');
+
+  readonly stock = viewChild<ElementRef<HTMLInputElement>>('stock');
 
   readonly categories = this.productService.productCategories;
 
-  enableNewCategory = signal(true);
+  enableNewCategory = true;
   readonly newCategory = signal('');
 
   ngAfterViewInit(): void {
@@ -65,10 +87,24 @@ export class AddProductComponent implements AfterViewInit {
     this.productCodeInput()?.nativeElement.focus();
   }
 
-  focusPrice(): void {
+  focusSellingPrice(): void {
     requestAnimationFrame(() => {
-      this.priceInput()?.nativeElement.focus();
-      this.priceInput()?.nativeElement.select();
+      this.sellingPrice()?.nativeElement.focus();
+      this.sellingPrice()?.nativeElement.select();
+    });
+  }
+
+  focusPurchasePrice(): void {
+    requestAnimationFrame(() => {
+      this.purchasePrice()?.nativeElement.focus();
+      this.purchasePrice()?.nativeElement.select();
+    });
+  }
+
+  focusStock(): void {
+    requestAnimationFrame(() => {
+      this.stock()?.nativeElement.focus();
+      this.stock()?.nativeElement.select();
     });
   }
 
@@ -82,17 +118,15 @@ export class AddProductComponent implements AfterViewInit {
     });
   }
 
-  submitFromCategory(): void {
-    this.addProduct();
+  private focusProductName(): void {
+    requestAnimationFrame(() => {
+      this.productNameInput()?.nativeElement.focus();
+    });
   }
 
-  addProduct(): void {
-    if (this.productForm.invalid) {
-      this.productForm.markAllAsTouched();
-      return;
-    }
-
-    this.productService.addProduct(this.productForm.getRawValue());
+  saveProduct(): void {
+    if (this.formType === 'new') this.productService.addProduct(this.productForm.getRawValue());
+    else this.formType === 'update';
 
     this.clear();
   }
@@ -102,24 +136,11 @@ export class AddProductComponent implements AfterViewInit {
       productName: '',
       productCode: '',
       category: '',
-      price: 0,
+      sellingPrice: 0,
+      purchasePrice: 0,
     });
-
+    this.formType = FormType.New;
     this.focusProductName();
-  }
-
-  onAction(): void {
-    if (this.productForm.valid) {
-      this.addProduct();
-    } else {
-      this.clear();
-    }
-  }
-
-  private focusProductName(): void {
-    requestAnimationFrame(() => {
-      this.productNameInput()?.nativeElement.focus();
-    });
   }
 
   addNewCategory() {
@@ -127,7 +148,19 @@ export class AddProductComponent implements AfterViewInit {
       this.productService.addProductCategory(this.newCategory());
     }
 
-    this.enableNewCategory.set(true);
+    this.enableNewCategory = true;
     this.newCategory.set('');
+  }
+
+  editProduct(product: Product) {
+    this.formType = FormType.Update;
+    this.productForm.patchValue({
+      productName: product.productName,
+      productCode: product.productCode,
+      category: product.category,
+      sellingPrice: product.sellingPrice,
+      stock: product.stock,
+      purchasePrice: product.purchasePrice,
+    });
   }
 }

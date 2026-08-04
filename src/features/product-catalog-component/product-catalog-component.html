@@ -33,7 +33,7 @@
 </div>
 <div class="products-grid">
   @for (product of filteredProducts(); track product.productCode) {
-    <mat-card class="product-card" role="button" (click)="addProductToOrder(product)">
+    <mat-card class="product-card" role="button" (click)="selectProduct(product)">
       <mat-card-content>
         <div class="product-name">
           {{ product.productName }}
