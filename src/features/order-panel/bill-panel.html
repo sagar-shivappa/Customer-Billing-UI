@@ -1,7 +1,11 @@
-<div class="order-total">
+<div class="order-header">
   <span>Order Summary</span>
   <span> Total : ₹{{ orderSummary().totalAmount }} </span>
+</div>
+
+<div class="order-action">
   <button matButton="elevated" (click)="clearOrder()">Clear</button>
+  <button matButton="filled" (click)="clearOrder()">Print</button>
 </div>
 
 <table mat-table [dataSource]="orderSummary().items" class="order-table">

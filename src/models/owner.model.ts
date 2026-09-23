@@ -1,6 +1,6 @@
 export interface OwnerProfile {
   shopName: string;
   address: string;
-  pincode: string;
+  pinCode: string;
   gstin: string;
 }

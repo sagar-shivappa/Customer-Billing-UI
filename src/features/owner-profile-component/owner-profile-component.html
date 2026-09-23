@@ -42,13 +42,13 @@
             matInput
             type="text"
             maxlength="6"
-            formControlName="pincode"
+            formControlName="pinCode"
             autocomplete="postal-code"
           />
 
-          <mat-hint align="end"> {{ profileForm.controls.pincode.value.length }}/6 </mat-hint>
+          <mat-hint align="end"> {{ profileForm.controls.pinCode.value.length }}/6 </mat-hint>
 
-          @if (profileForm.controls.pincode.hasError('required')) {
+          @if (profileForm.controls.pinCode.hasError('required')) {
             <mat-error>Pincode is required.</mat-error>
           }
         </mat-form-field>

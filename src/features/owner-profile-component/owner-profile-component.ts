@@ -5,6 +5,7 @@ import { MatLabel, MatFormField, MatFormFieldControl } from '@angular/material/f
 import { MatCardContent, MatCardHeader, MatCardTitle, MatCard } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { OwnerProfile } from '../../models/owner.model';
 
 @Component({
   selector: 'app-owner-profile-component',
@@ -29,12 +30,15 @@ export class OwnerProfileComponent {
   readonly profileForm = this.fb.nonNullable.group({
     shopName: ['', Validators.required],
     address: ['', Validators.required],
-    pincode: ['', Validators.required],
+    pinCode: ['', Validators.required],
     gstin: [''],
   });
   ngOnInit(): void {
-    this.profileForm.patchValue({
-      ...this.ownerProfileService.profile(),
+    this.ownerProfileService.getOwner().subscribe((data: OwnerProfile) => {
+      this.ownerProfileService._profile.set(data);
+      this.profileForm.patchValue({
+        ...data,
+      });
     });
 
     this.profileForm.markAsPristine();

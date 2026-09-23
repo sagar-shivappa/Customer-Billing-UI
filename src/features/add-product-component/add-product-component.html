@@ -77,7 +77,7 @@
     </form>
     <div class="action">
       @if (enableNewCategory) {
-        <button type="button" class="link-button" (click)="(!enableNewCategory)">
+        <button type="button" class="link-button" (click)="enableNewCategory = !enableNewCategory">
           Category not listed ?
         </button>
       } @else {
@@ -99,7 +99,7 @@
           Save
         </button>
         <button [matButton]="'outlined'" (click)="clear()">
-          <mat-icon> 'delete' </mat-icon>
+          <mat-icon> delete </mat-icon>
           Clear
         </button>
       </div>

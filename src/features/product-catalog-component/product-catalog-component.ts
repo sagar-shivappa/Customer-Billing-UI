@@ -1,4 +1,4 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,9 +23,8 @@ import { Product } from '../../models/product.model';
   templateUrl: './product-catalog-component.html',
   styleUrl: './product-catalog-component.css',
 })
-export class ProductCatalogComponent {
+export class ProductCatalogComponent implements OnInit {
   private readonly productService = inject(ProductService);
-  private readonly billingService = inject(BillingService);
 
   readonly products = this.productService.products;
 
@@ -36,6 +35,10 @@ export class ProductCatalogComponent {
   readonly productCategories = this.productService.productCategories();
 
   readonly selectedCategory = signal<string>('All');
+
+  ngOnInit(): void {
+    this.productService.getAllProducts();
+  }
 
   selectCategory(category: string): void {
     this.selectedCategory.set(category);
