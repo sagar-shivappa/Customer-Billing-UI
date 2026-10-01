@@ -15,11 +15,18 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
   {
     label: 'Customers',
     icon: 'people',
-    route: '/profile',
+    route: '/customer',
   },
+
+  {
+    label: 'Owner',
+    icon: 'manage_accounts',
+    route: '/owner',
+  },
+
   {
     label: 'Settings',
-    icon: 'settings',
+    icon: 'monitoring',
     route: '/settings',
   },
 ];

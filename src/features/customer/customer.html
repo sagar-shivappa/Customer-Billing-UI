@@ -1,0 +1,370 @@
+<div class="customer-page">
+  <!-- =========================
+       Page Header
+  ========================== -->
+
+  <div class="page-header">
+    <div>
+      <h1>Customers</h1>
+      <p>Manage your customer profiles</p>
+    </div>
+  </div>
+
+  <!-- =========================
+       Messages
+  ========================== -->
+
+  @if (successMessage()) {
+    <div class="message success">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ successMessage() }}</span>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="message error">
+      <mat-icon>error</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <!-- =========================
+       Customer Table
+  ========================== -->
+
+  <mat-card class="customer-list-card">
+    <mat-card-header>
+      <div class="customer-search">
+        <mat-form-field appearance="outline">
+          <mat-label>Search Customer</mat-label>
+
+          <input
+            #customerSearch
+            matInput
+            type="text"
+            placeholder="Name, phone or customer code"
+            (input)="filterCustomers(customerSearch.value)"
+          />
+
+          @if (customerSearch.value) {
+            <button
+              matIconButton
+              matSuffix
+              type="button"
+              aria-label="Clear search"
+              (click)="customerSearch.value = ''; filterCustomers('')"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          } @else {
+            <mat-icon matSuffix> search </mat-icon>
+          }
+        </mat-form-field>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading()) {
+        <!-- Loading -->
+
+        <div class="loading">
+          <mat-spinner diameter="40"></mat-spinner>
+
+          <span> Loading customers... </span>
+        </div>
+      } @else if (dataSource.filteredData.length === 0) {
+        <!-- No Customers -->
+
+        <div class="empty-state">
+          <mat-icon> people_outline </mat-icon>
+
+          <h3>No customers found</h3>
+
+          <p>Try a different name, phone number or customer code.</p>
+        </div>
+      } @else {
+        <!-- =========================
+             Table
+        ========================== -->
+
+        <div class="table-container">
+          <table mat-table [dataSource]="dataSource" class="customer-table">
+            <!-- Customer Code -->
+
+            <ng-container matColumnDef="customerCode">
+              <th mat-header-cell *matHeaderCellDef>Customer Code</th>
+
+              <td mat-cell *matCellDef="let customer">
+                <span class="customer-code">
+                  {{ customer.customerCode }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Name -->
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+
+              <td mat-cell *matCellDef="let customer">
+                <span class="customer-name">
+                  {{ customer.name }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Phone -->
+
+            <ng-container matColumnDef="phone">
+              <th mat-header-cell *matHeaderCellDef>Phone</th>
+
+              <td mat-cell *matCellDef="let customer">
+                {{ customer.phone }}
+              </td>
+            </ng-container>
+
+            <!-- Email -->
+
+            <!-- <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+
+              <td mat-cell *matCellDef="let customer">
+                @if (customer.email) {
+                  {{ customer.email }}
+                } @else {
+                  <span class="not-available"> — </span>
+                }
+              </td>
+            </ng-container> -->
+
+            <!-- GSTIN -->
+
+            <!-- <ng-container matColumnDef="gstin">
+              <th mat-header-cell *matHeaderCellDef>GSTIN</th>
+
+              <td mat-cell *matCellDef="let customer">
+                @if (customer.gstin) {
+                  {{ customer.gstin }}
+                } @else {
+                  <span class="not-available"> — </span>
+                }
+              </td>
+            </ng-container> -->
+
+            <!-- Status -->
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+
+              <td mat-cell *matCellDef="let customer">
+                @if (customer.isActive) {
+                  <span class="status active"> Active </span>
+                } @else {
+                  <span class="status inactive"> Inactive </span>
+                }
+              </td>
+            </ng-container>
+
+            <!-- Actions -->
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+
+              <td mat-cell *matCellDef="let customer">
+                <div class="customer-actions">
+                  <!-- Edit -->
+
+                  <button
+                    matIconButton
+                    type="button"
+                    aria-label="Edit customer"
+                    matTooltip="Edit customer"
+                    (click)="editCustomer(customer)"
+                  >
+                    <mat-icon> edit </mat-icon>
+                  </button>
+
+                  <!-- Deactivate -->
+
+                  <!-- @if (customer.isActive) {
+                    <button
+                      matIconButton
+                      type="button"
+                      aria-label="Deactivate customer"
+                      matTooltip="Deactivate customer"
+                      (click)="deactivateCustomer(customer)"
+                    >
+                      <mat-icon> person_off </mat-icon>
+                    </button>
+                  } -->
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Header Row -->
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+            <!-- Data Rows -->
+
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+
+          <!-- =========================
+               Pagination
+          ========================== -->
+
+          @if (!loading() && dataSource.filteredData.length > 0) {
+            <mat-paginator
+              [pageSize]="5"
+              [pageSizeOptions]="[5]"
+              showFirstLastButtons
+              aria-label="Customer table pagination"
+            >
+            </mat-paginator>
+          }
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- =========================
+       Customer Form
+  ========================== -->
+  <section>
+    <mat-card class="customer-form-card">
+      <mat-card-header class="header">
+        <mat-card-title>
+          @if (formType() === 'new') {
+            Add New Customer
+          } @else {
+            Update Customer
+          }
+        </mat-card-title>
+
+        <button matButton="filled" type="button" (click)="resetForm()">
+          <mat-icon> clear </mat-icon>
+
+          Clear Form
+        </button>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form
+          [formGroup]="customerForm"
+          (ngSubmit)="formType() === 'new' ? createCustomer() : updateCustomer()"
+        >
+          <!-- Customer Name -->
+
+          <mat-form-field appearance="outline">
+            <mat-label> Customer Name </mat-label>
+
+            <input matInput formControlName="name" autofocus placeholder="Enter customer name" />
+
+            @if (
+              customerForm.controls.name.touched && customerForm.controls.name.hasError('required')
+            ) {
+              <mat-error> Customer name is required </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Phone -->
+
+          <mat-form-field appearance="outline">
+            <mat-label> Phone Number </mat-label>
+
+            <input
+              matInput
+              formControlName="phone"
+              minlength="10"
+              maxlength="10"
+              placeholder="Enter phone number"
+              type="tel"
+            />
+
+            @if (
+              customerForm.controls.phone.touched &&
+              customerForm.controls.phone.hasError('required')
+            ) {
+              <mat-error> Phone number is required </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Email -->
+
+          <mat-form-field appearance="outline">
+            <mat-label> Email </mat-label>
+
+            <input
+              matInput
+              formControlName="email"
+              placeholder="Enter email address"
+              type="email"
+            />
+          </mat-form-field>
+
+          <!-- Address -->
+
+          <mat-form-field appearance="outline">
+            <mat-label> Address </mat-label>
+
+            <textarea
+              matInput
+              formControlName="address"
+              placeholder="Enter customer address"
+              rows="2"
+            ></textarea>
+          </mat-form-field>
+
+          <!-- Pincode -->
+
+          <mat-form-field appearance="outline">
+            <mat-label> Pincode </mat-label>
+
+            <input
+              matInput
+              formControlName="pincode"
+              placeholder="Enter pincode"
+              inputmode="numeric"
+            />
+          </mat-form-field>
+
+          <!-- GSTIN -->
+
+          <mat-form-field appearance="outline">
+            <mat-label> GSTIN </mat-label>
+
+            <input matInput formControlName="gstin" placeholder="Enter GSTIN" />
+          </mat-form-field>
+
+          <!-- Form Actions -->
+
+          <div class="form-actions">
+            @if (formType() === 'new') {
+              <button matButton="filled" type="submit" [disabled]="loading()">
+                <mat-icon> person_add </mat-icon>
+
+                Create Customer
+              </button>
+            } @else {
+              <button matButton="filled" type="submit" [disabled]="loading()">
+                <mat-icon> save </mat-icon>
+
+                Update Customer
+              </button>
+
+              <button
+                matButton="outlined"
+                type="button"
+                (click)="resetForm()"
+                [disabled]="loading()"
+              >
+                Cancel
+              </button>
+            }
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

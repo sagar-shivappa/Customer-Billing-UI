@@ -1,13 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { Header } from '../header/header';
 import { Sidenav } from '../sidenav/sidenav';
-import { Footer } from '../footer/footer';
 import { RouterOutlet } from '@angular/router';
 import { BillPanel } from '../../features/order-panel/bill-panel';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, Sidenav, Footer, RouterOutlet, BillPanel],
+  imports: [Header, Sidenav, RouterOutlet, BillPanel],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

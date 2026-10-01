@@ -48,6 +48,7 @@ export class BillingEntryComponent implements AfterViewInit {
     this.focusProductInput();
   }
 
+  // Add product from input
   add(): void {
     if (this.billingForm.invalid) {
       return;
@@ -81,11 +82,10 @@ export class BillingEntryComponent implements AfterViewInit {
     this.add();
   }
 
+  //Add from catalog
   addProductToOrder(product: Product): void {
     this.billingService.addItem({
       productCode: product.productCode,
-      quantity: 1,
-      unitPrice: product.sellingPrice,
     });
   }
 }

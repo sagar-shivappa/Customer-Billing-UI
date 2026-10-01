@@ -8,8 +8,7 @@ export interface OrderSummaryItem {
 
 export interface Item {
   productCode: string;
-  quantity: number;
-  unitPrice: number;
+  quantity?: number;
 }
 
 export interface OrderSummary {

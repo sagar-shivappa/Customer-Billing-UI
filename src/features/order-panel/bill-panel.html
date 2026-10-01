@@ -1,11 +1,38 @@
 <div class="order-header">
+  <form [formGroup]="customerForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Customer Phone No. </mat-label>
+      <input
+        #customerId
+        matInput
+        type="text"
+        minlength="10"
+        maxlength="10"
+        formControlName="customerId"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Payment Type</mat-label>
+
+      <mat-select formControlName="paymentType">
+        @for (payment of paymentTypes; track payment) {
+          <mat-option [value]="payment">
+            {{ payment }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+<div class="order-header">
   <span>Order Summary</span>
   <span> Total : ₹{{ orderSummary().totalAmount }} </span>
 </div>
 
 <div class="order-action">
   <button matButton="elevated" (click)="clearOrder()">Clear</button>
-  <button matButton="filled" (click)="clearOrder()">Print</button>
+  <button matButton="filled" (click)="order()">Print</button>
 </div>
 
 <table mat-table [dataSource]="orderSummary().items" class="order-table">
@@ -23,13 +50,7 @@
     <td mat-cell *matCellDef="let item">
       @if (allowPriceEdit) {
         <mat-form-field appearance="outline" class="price-field">
-          <input
-            matInput
-            type="number"
-            min="0"
-            [value]="item.unitPrice"
-            (change)="updatePrice(item.productCode, $event)"
-          />
+          <input matInput type="number" min="0" [value]="item.unitPrice" />
         </mat-form-field>
       } @else {
         {{ item.unitPrice }}
