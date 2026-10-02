@@ -31,6 +31,21 @@ export class ProductService {
     });
   }
 
+  updateProduct(product: Product): void {
+    this.http
+      .put<Product>(`${app_config.API_BASE_URL}/api/products/${product._id}`, product)
+      .subscribe({
+        next: () => {
+          this._products.update((products) =>
+            products.map((p) => (p._id === product._id ? product : p)),
+          );
+        },
+        error: (error) => {
+          console.error('Failed to update product', error);
+        },
+      });
+  }
+
   getAllProducts(): void {
     this.http.get<ProductResponse>(`${app_config.API_BASE_URL}/api/products`).subscribe({
       next: (response) => {

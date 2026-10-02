@@ -94,8 +94,12 @@
           (click)="saveProduct()"
           [disabled]="this.productForm.invalid"
         >
-          <mat-icon> save </mat-icon>
-          Save
+          <mat-icon> save</mat-icon>
+          @if (formType === 'new') {
+            Save
+          } @else {
+            Update
+          }
         </button>
         <button [matButton]="'outlined'" (click)="clear()">
           <mat-icon> delete </mat-icon>

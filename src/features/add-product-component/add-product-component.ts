@@ -51,6 +51,7 @@ export class AddProductComponent implements AfterViewInit {
   private readonly ownerService = inject(OwnerProfileService);
 
   readonly productForm = this.fb.nonNullable.group({
+    _id: [''],
     productName: ['', Validators.required],
     productCode: [
       '',
@@ -63,7 +64,7 @@ export class AddProductComponent implements AfterViewInit {
       ],
     ],
     category: ['', Validators.required],
-    purchasePrice: [0, [Validators.min(1)]],
+    purchasePrice: [0],
     sellingPrice: [0, [Validators.required, Validators.min(1)]],
     stock: [0],
   });
@@ -136,7 +137,9 @@ export class AddProductComponent implements AfterViewInit {
 
   saveProduct(): void {
     if (this.formType === 'new') this.productService.addProduct(this.productForm.getRawValue());
-    else this.formType === 'update';
+    else if (this.formType === 'update') {
+      this.productService.updateProduct(this.productForm.getRawValue());
+    }
 
     this.clear();
   }
@@ -163,6 +166,7 @@ export class AddProductComponent implements AfterViewInit {
   editProduct(product: Product) {
     this.formType = FormType.Update;
     this.productForm.patchValue({
+      _id: product._id,
       productName: product.productName,
       productCode: product.productCode,
       category: product.category,
