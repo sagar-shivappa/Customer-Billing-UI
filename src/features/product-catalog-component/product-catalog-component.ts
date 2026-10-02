@@ -6,8 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
 import { MatButtonModule } from '@angular/material/button';
-import { BillingService } from '../../services/billing.service';
 import { Product } from '../../models/product.model';
+import { OwnerProfileService } from '../../services/owner.service';
 
 @Component({
   selector: 'app-product-catalog',
@@ -25,14 +25,13 @@ import { Product } from '../../models/product.model';
 })
 export class ProductCatalogComponent implements OnInit {
   private readonly productService = inject(ProductService);
+  private readonly ownerService = inject(OwnerProfileService);
 
   readonly products = this.productService.products;
 
   readonly search = signal('');
 
   readonly productSelected = output<Product>();
-
-  readonly productCategories = this.productService.productCategories();
 
   readonly selectedCategory = signal<string>('All');
 
@@ -43,6 +42,8 @@ export class ProductCatalogComponent implements OnInit {
   selectCategory(category: string): void {
     this.selectedCategory.set(category);
   }
+
+  readonly productCategories = computed(() => this.ownerService.profile()?.productCategories ?? []);
 
   readonly filteredProducts = computed(() => {
     const searchValue = this.search().toLowerCase().trim();

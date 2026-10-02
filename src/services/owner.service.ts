@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { OwnerProfile } from '../models/owner.model';
 import { HttpClient } from '@angular/common/http';
 import { app_config } from '../app/core/config/app.config';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,7 @@ export class OwnerProfileService {
     address: '',
     pinCode: '',
     gstin: '',
+    productCategories: [],
   });
   http = inject(HttpClient);
 
@@ -23,7 +24,33 @@ export class OwnerProfileService {
     this._profile.set(profile);
   }
 
-  getOwner(): Observable<OwnerProfile> {
-    return this.http.get<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`);
+  loadProfile(): Observable<OwnerProfile> {
+    return this.http
+      .get<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`)
+      .pipe(tap((profile) => this._profile.set(profile)));
+  }
+
+  updateProductCategories(newCategory: string): void {
+    const profile = this._profile();
+
+    if (!profile) {
+      return;
+    }
+
+    const productCategories = [...(profile.productCategories ?? []), newCategory.trim()];
+
+    this.http
+      .put<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`, {
+        ...profile,
+        productCategories,
+      })
+      .subscribe({
+        next: () => {
+          this._profile.set({
+            ...profile,
+            productCategories,
+          });
+        },
+      });
   }
 }

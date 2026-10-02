@@ -4,6 +4,7 @@ import { AddProductComponent } from '../features/add-product-component/add-produ
 import { BillingEntryComponent } from '../features/billing-entry-component/billing-entry-component';
 import { OwnerProfileComponent } from '../features/owner-profile-component/owner-profile-component';
 import { CustomerComponent } from '../features/customer/customer';
+import { ReportsComponent } from '../features/reports-component/reports-component';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,7 @@ export const routes: Routes = [
       },
       { path: 'owner', component: OwnerProfileComponent },
       { path: 'customer', component: CustomerComponent },
+      { path: 'reports', component: ReportsComponent },
     ],
   },
 ];

@@ -22,7 +22,7 @@
     All
   </button>
 
-  @for (category of productCategories; track category) {
+  @for (category of productCategories(); track category) {
     <button
       [matButton]="selectedCategory() === category ? 'filled' : 'outlined'"
       (click)="selectCategory(category)"

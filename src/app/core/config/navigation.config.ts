@@ -8,7 +8,7 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
   },
   {
     label: 'Products',
-    icon: 'inventory_2',
+    icon: 'assignment_add',
     route: '/products',
   },
 
@@ -25,8 +25,8 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
   },
 
   {
-    label: 'Settings',
+    label: 'Reports',
     icon: 'monitoring',
-    route: '/settings',
+    route: '/reports',
   },
 ];

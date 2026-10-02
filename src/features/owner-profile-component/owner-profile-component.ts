@@ -34,11 +34,8 @@ export class OwnerProfileComponent {
     gstin: [''],
   });
   ngOnInit(): void {
-    this.ownerProfileService.getOwner().subscribe((data: OwnerProfile) => {
-      this.ownerProfileService._profile.set(data);
-      this.profileForm.patchValue({
-        ...data,
-      });
+    this.profileForm.patchValue({
+      ...this.ownerProfileService.profile(),
     });
 
     this.profileForm.markAsPristine();

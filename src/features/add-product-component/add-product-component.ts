@@ -1,4 +1,12 @@
-import { Component, inject, AfterViewInit, ElementRef, viewChild, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  AfterViewInit,
+  ElementRef,
+  viewChild,
+  signal,
+  computed,
+} from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ViewChild } from '@angular/core';
 import { ProductService } from '../../services/product.service';
@@ -12,6 +20,7 @@ import { MatIcon } from '@angular/material/icon';
 import { uniqueProductCodeValidator } from '../../shared/validators/product-validator';
 import { Product } from '../../models/product.model';
 import { TitleCasePipe } from '@angular/common';
+import { OwnerProfileService } from '../../services/owner.service';
 
 export enum FormType {
   New = 'new',
@@ -39,6 +48,7 @@ export enum FormType {
 export class AddProductComponent implements AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly productService = inject(ProductService);
+  private readonly ownerService = inject(OwnerProfileService);
 
   readonly productForm = this.fb.nonNullable.group({
     productName: ['', Validators.required],
@@ -72,7 +82,7 @@ export class AddProductComponent implements AfterViewInit {
 
   readonly stock = viewChild<ElementRef<HTMLInputElement>>('stock');
 
-  readonly categories = this.productService.productCategories;
+  readonly productCategories = computed(() => this.ownerService.profile()?.productCategories ?? []);
 
   enableNewCategory = true;
   readonly newCategory = signal('');
@@ -144,9 +154,7 @@ export class AddProductComponent implements AfterViewInit {
   }
 
   addNewCategory() {
-    if (this.newCategory() != '') {
-      this.productService.addProductCategory(this.newCategory());
-    }
+    this.ownerService.updateProductCategories(this.newCategory());
 
     this.enableNewCategory = true;
     this.newCategory.set('');

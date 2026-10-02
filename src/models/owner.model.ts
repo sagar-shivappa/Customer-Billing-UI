@@ -3,4 +3,5 @@ export interface OwnerProfile {
   address: string;
   pinCode: string;
   gstin: string;
+  productCategories?: string[];
 }
