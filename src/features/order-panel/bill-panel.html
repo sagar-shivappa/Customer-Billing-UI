@@ -1,30 +1,29 @@
-<div class="order-header">
-  <form [formGroup]="customerForm">
-    <mat-form-field appearance="outline">
-      <mat-label>Customer Phone No. </mat-label>
-      <input
-        #customerId
-        matInput
-        type="text"
-        minlength="10"
-        maxlength="10"
-        formControlName="customerId"
-      />
-    </mat-form-field>
+<form [formGroup]="customerForm" class="order-header">
+  <mat-form-field appearance="outline">
+    <mat-label>Customer Phone No. </mat-label>
+    <input
+      #customerId
+      matInput
+      type="text"
+      minlength="10"
+      maxlength="10"
+      formControlName="customerId"
+    />
+  </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Payment Type</mat-label>
+  <mat-form-field appearance="outline">
+    <mat-label>Payment Type</mat-label>
 
-      <mat-select formControlName="paymentType">
-        @for (payment of paymentTypes; track payment) {
-          <mat-option [value]="payment">
-            {{ payment }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </form>
-</div>
+    <mat-select formControlName="paymentType">
+      @for (payment of paymentTypes; track payment) {
+        <mat-option [value]="payment">
+          {{ payment }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</form>
+<div class="customer-details">Checking for Customer : TBD</div>
 <div class="order-header">
   <span>Order Summary</span>
   <span> Total : ₹{{ orderSummary().totalAmount }} </span>

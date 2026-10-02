@@ -10,6 +10,7 @@ import { ProductCatalogComponent } from '../product-catalog-component/product-ca
 import { BillingService } from '../../services/billing.service';
 import { Item } from '../../models/bill.model';
 import { Product } from '../../models/product.model';
+import { BillPanel } from '../order-panel/bill-panel';
 
 @Component({
   selector: 'app-billing-entry',
@@ -25,6 +26,7 @@ import { Product } from '../../models/product.model';
     MatButtonModule,
     MatTableModule,
     ProductCatalogComponent,
+    BillPanel,
   ],
   templateUrl: './billing-entry-component.html',
   styleUrl: './billing-entry-component.css',
