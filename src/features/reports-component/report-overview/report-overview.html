@@ -1,0 +1,210 @@
+<div class="overview-page">
+  <!-- =========================
+         Header
+    ========================== -->
+
+  <div class="page-header">
+    <div>
+      <h1>Overview</h1>
+
+      <p>Sales and billing summary for {{ filterLabel() }}</p>
+    </div>
+
+    <button matButton="outlined" type="button" (click)="refresh()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <!-- =========================
+         Filters
+    ========================== -->
+
+  <mat-card class="filter-card">
+    <div class="filter-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Date Range</mat-label>
+
+        <mat-select
+          [ngModel]="selectedFilter()"
+          (ngModelChange)="selectedFilter.set($event); onFilterChange()"
+        >
+          <mat-option value="today"> Today </mat-option>
+
+          <mat-option value="week"> This Week </mat-option>
+
+          <mat-option value="month"> This Month </mat-option>
+
+          <mat-option value="custom"> Custom Range </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (showCustomDates()) {
+        <mat-form-field appearance="outline">
+          <mat-label>From</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="fromPicker"
+            [ngModel]="customFromDate()"
+            (ngModelChange)="customFromDate.set($event)"
+          />
+
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+
+          <mat-datepicker #fromPicker />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>To</mat-label>
+
+          <input
+            matInput
+            [matDatepicker]="toPicker"
+            [ngModel]="customToDate()"
+            (ngModelChange)="customToDate.set($event)"
+          />
+
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+
+          <mat-datepicker #toPicker />
+        </mat-form-field>
+
+        <button
+          matButton="filled"
+          type="button"
+          (click)="applyCustomDateRange()"
+          [disabled]="loading()"
+        >
+          Apply
+        </button>
+      }
+    </div>
+  </mat-card>
+
+  <!-- =========================
+         Loading
+    ========================== -->
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40" />
+
+      <p>Loading overview...</p>
+    </div>
+  }
+
+  <!-- =========================
+         Error
+    ========================== -->
+
+  @if (errorMessage()) {
+    <mat-card class="error-card">
+      <mat-icon>error_outline</mat-icon>
+
+      <span>
+        {{ errorMessage() }}
+      </span>
+    </mat-card>
+  }
+
+  @if (!loading() && overview(); as data) {
+    <!-- =========================
+           Summary Cards
+      ========================== -->
+
+    <div class="summary-grid">
+      <mat-card class="summary-card">
+        <div class="summary-icon">
+          <mat-icon>payments</mat-icon>
+        </div>
+
+        <div class="summary-content">
+          <span class="summary-label"> Total Sales </span>
+
+          <strong class="summary-value"> ₹{{ data.totalSales | number: '1.2-2' }} </strong>
+        </div>
+      </mat-card>
+
+      <mat-card class="summary-card">
+        <div class="summary-icon">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+
+        <div class="summary-content">
+          <span class="summary-label"> Transactions </span>
+
+          <strong class="summary-value">
+            {{ data.transactionCount }}
+          </strong>
+        </div>
+      </mat-card>
+
+      <mat-card class="summary-card">
+        <div class="summary-icon">
+          <mat-icon>calculate</mat-icon>
+        </div>
+
+        <div class="summary-content">
+          <span class="summary-label"> Average Bill </span>
+
+          <strong class="summary-value"> ₹{{ data.averageBill | number: '1.2-2' }} </strong>
+        </div>
+      </mat-card>
+
+      <mat-card class="summary-card">
+        <div class="summary-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+
+        <div class="summary-content">
+          <span class="summary-label"> Customers </span>
+
+          <strong class="summary-value">
+            {{ data.customerCount }}
+          </strong>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- =========================
+           Sales Trend
+      ========================== -->
+
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title> Sales Trend </mat-card-title>
+
+        <mat-card-subtitle> Sales performance over the selected period </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="chart-placeholder">
+          <mat-icon>show_chart</mat-icon>
+
+          <p>Sales trend will be displayed here.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- =========================
+           Payment Breakdown
+      ========================== -->
+
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title> Payment Breakdown </mat-card-title>
+
+        <mat-card-subtitle> Payment summary for the selected period </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="chart-placeholder">
+          <mat-icon>pie_chart</mat-icon>
+
+          <p>Payment breakdown will be displayed here.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
