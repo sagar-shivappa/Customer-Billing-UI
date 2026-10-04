@@ -31,21 +31,10 @@ export class CustomerService {
   }
 
   /**
-   * Get customer by customer code
-   */
-  getCustomerByCode(customerCode: string): Observable<CustomerResponse> {
-    return this.http.get<CustomerResponse>(`${this.apiUrl}/lookup`, {
-      params: {
-        customerCode,
-      },
-    });
-  }
-
-  /**
    * Create customer
    */
   createCustomer(
-    customer: Omit<Customer, 'customerCode' | '_id' | 'isActive' | 'createdAt' | 'updatedAt'>,
+    customer: Omit<Customer, 'customerId' | '_id' | 'isActive' | 'createdAt' | 'updatedAt'>,
   ): Observable<CustomerResponse> {
     return this.http.post<CustomerResponse>(`${this.apiUrl}/api/customers`, customer);
   }

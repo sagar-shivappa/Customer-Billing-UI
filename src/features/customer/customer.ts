@@ -113,7 +113,7 @@ export class CustomerComponent {
   /**
    * Columns displayed in customer table
    */
-  displayedColumns = ['customerCode', 'name', 'phone', 'status', 'actions'];
+  displayedColumns = ['customerId', 'name', 'phone', 'status', 'actions'];
 
   /**
    * Customer form
@@ -142,7 +142,7 @@ export class CustomerComponent {
       return (
         customer.name.toLowerCase().includes(search) ||
         customer.phone.toLowerCase().includes(search) ||
-        customer.customerCode.toLowerCase().includes(search)
+        customer.customerId.toLowerCase().includes(search)
       );
     };
 

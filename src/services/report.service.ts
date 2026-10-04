@@ -10,6 +10,53 @@ export interface OverviewResponse {
   customerCount: number;
 }
 
+export interface TransactionItem {
+  productCode: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface Transaction {
+  _id?: string;
+  billNumber: string;
+  customerId?: string;
+  customerName?: string;
+  items: TransactionItem[];
+  grandTotal: number;
+  paymentType: string;
+  saleDate: string;
+}
+
+export interface TransactionSummary {
+  transactionCount: number;
+  totalSales: number;
+  averageBill: number;
+}
+
+export interface TransactionPagination {
+  page: number;
+  limit: number;
+  totalRecords: number;
+  totalPages: number;
+}
+
+export interface TransactionsResponse {
+  transactions: Transaction[];
+  pagination: TransactionPagination;
+  summary: TransactionSummary;
+}
+
+export interface TransactionFilters {
+  from?: string;
+  to?: string;
+  paymentType?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,5 +69,20 @@ export class ReportsService {
     return this.http.get<OverviewResponse>(`${app_config.API_BASE_URL}/api/reports/overview`, {
       params,
     });
+  }
+
+  getTransactions(filters: TransactionFilters): Observable<TransactionsResponse> {
+    let params = new HttpParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, String(value));
+      }
+    });
+
+    return this.http.get<TransactionsResponse>(
+      `${app_config.API_BASE_URL}/api/reports/transactions`,
+      { params },
+    );
   }
 }
