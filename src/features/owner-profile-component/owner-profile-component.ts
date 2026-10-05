@@ -5,7 +5,6 @@ import { MatLabel, MatFormField, MatFormFieldControl } from '@angular/material/f
 import { MatCardContent, MatCardHeader, MatCardTitle, MatCard } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { OwnerProfile } from '../../models/owner.model';
 
 @Component({
   selector: 'app-owner-profile-component',

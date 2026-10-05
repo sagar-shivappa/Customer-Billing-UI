@@ -24,6 +24,14 @@
   display: flex;
   justify-content: space-between;
   margin: 16px;
+  margin-bottom: 0px;
   font-weight: 600;
+  align-items: center;
+}
+
+.customer-details {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
   align-items: center;
 }

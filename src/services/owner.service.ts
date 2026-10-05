@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { OwnerProfile } from '../models/owner.model';
+import { OwnerProfile, OwnerProfileResponse } from '../models/owner.model';
 import { HttpClient } from '@angular/common/http';
 import { app_config } from '../app/core/config/app.config';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -18,16 +18,54 @@ export class OwnerProfileService {
   http = inject(HttpClient);
 
   readonly profile = this._profile.asReadonly();
+  private _profileExists = signal(false);
 
   saveProfile(profile: OwnerProfile): void {
-    this.http.post<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`, profile).subscribe();
-    this._profile.set(profile);
+    if (this._profileExists()) {
+      this.http
+        .put<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`, profile)
+        .pipe(
+          tap((updatedProfile) => {
+            this._profile.set(updatedProfile);
+            this._profileExists.set(true);
+          }),
+        )
+        .subscribe();
+    }
+
+    this.http
+      .post<OwnerProfileResponse>(`${app_config.API_BASE_URL}/api/owner`, profile)
+      .pipe(
+        tap((createdProfile: OwnerProfileResponse) => {
+          this._profile.set(createdProfile.data);
+          this._profileExists.set(true);
+        }),
+      )
+      .subscribe();
   }
 
-  loadProfile(): Observable<OwnerProfile> {
-    return this.http
-      .get<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`)
-      .pipe(tap((profile) => this._profile.set(profile)));
+  loadProfile(): Observable<OwnerProfile> | void {
+    return this.http.get<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`).pipe(
+      tap((profile) => {
+        this._profile.set(profile);
+        this._profileExists.set(true);
+      }),
+
+      catchError((error) => {
+        if (error.status === 404) {
+          // Owner doesn't exist yet
+          this._profileExists.set(false);
+
+          return of(this._profile());
+        }
+
+        console.error('Failed to load owner profile:', error);
+
+        this._profileExists.set(false);
+
+        return of(this._profile());
+      }),
+    );
   }
 
   updateProductCategories(newCategory: string): void {

@@ -23,7 +23,7 @@ export class CustomerService {
    * Get customer by phone
    */
   getCustomerByPhone(phone: string): Observable<CustomerResponse> {
-    return this.http.get<CustomerResponse>(`${this.apiUrl}/lookup`, {
+    return this.http.get<CustomerResponse>(`${this.apiUrl}/api/customers/lookup`, {
       params: {
         phone,
       },
@@ -43,7 +43,7 @@ export class CustomerService {
    * Update customer
    */
   updateCustomer(id: string, customer: Partial<Customer>): Observable<CustomerResponse> {
-    return this.http.put<CustomerResponse>(`${this.apiUrl}/${id}`, customer);
+    return this.http.put<CustomerResponse>(`${this.apiUrl}/api/customers/${id}`, customer);
   }
 
   /**
