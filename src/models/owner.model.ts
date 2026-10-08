@@ -6,6 +6,7 @@ export interface OwnerProfile {
   pinCode: string;
   gstin: string;
   productCategories?: string[];
+  stockManagement: boolean;
   __v?: number;
 }
 

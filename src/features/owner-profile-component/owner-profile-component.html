@@ -59,6 +59,17 @@
 
           <input matInput formControlName="gstin" placeholder="Optional" autocomplete="off" />
         </mat-form-field>
+
+        <div class="stock-management">
+          <mat-slide-toggle formControlName="stockManagement">
+            Enable Stock Management
+          </mat-slide-toggle>
+
+          <p>
+            When enabled, product stock will be checked and automatically reduced when a bill is
+            created.
+          </p>
+        </div>
       </div>
 
       <div class="button-row">

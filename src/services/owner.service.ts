@@ -14,6 +14,7 @@ export class OwnerProfileService {
     pinCode: '',
     gstin: '',
     productCategories: [],
+    stockManagement: false,
   });
   http = inject(HttpClient);
 
@@ -31,17 +32,17 @@ export class OwnerProfileService {
           }),
         )
         .subscribe();
+    } else {
+      this.http
+        .post<OwnerProfileResponse>(`${app_config.API_BASE_URL}/api/owner`, profile)
+        .pipe(
+          tap((createdProfile: OwnerProfileResponse) => {
+            this._profile.set(createdProfile.data);
+            this._profileExists.set(true);
+          }),
+        )
+        .subscribe();
     }
-
-    this.http
-      .post<OwnerProfileResponse>(`${app_config.API_BASE_URL}/api/owner`, profile)
-      .pipe(
-        tap((createdProfile: OwnerProfileResponse) => {
-          this._profile.set(createdProfile.data);
-          this._profileExists.set(true);
-        }),
-      )
-      .subscribe();
   }
 
   loadProfile(): Observable<OwnerProfile> | void {

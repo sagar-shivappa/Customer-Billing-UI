@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OwnerProfileService } from '../../services/owner.service';
-import { MatLabel, MatFormField, MatFormFieldControl } from '@angular/material/form-field';
+import { MatLabel, MatFormField } from '@angular/material/form-field';
 import { MatCardContent, MatCardHeader, MatCardTitle, MatCard } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-owner-profile-component',
@@ -18,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './owner-profile-component.html',
   styleUrl: './owner-profile-component.css',
@@ -31,6 +33,7 @@ export class OwnerProfileComponent {
     address: ['', Validators.required],
     pinCode: ['', Validators.required],
     gstin: [''],
+    stockManagement: [false, Validators.required],
   });
   ngOnInit(): void {
     this.profileForm.patchValue({
