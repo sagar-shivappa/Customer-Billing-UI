@@ -16,3 +16,41 @@ body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
+/* =========================
+   Snackbar
+========================= */
+
+.snackbar-success .mdc-snackbar__surface {
+  background-color: #35ba3b !important;
+  color: #ffffff !important;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+  background-color: #c62828 !important;
+  color: #ffffff !important;
+}
+
+.snackbar-info .mdc-snackbar__surface {
+  background-color: #1565c0 !important;
+  color: #ffffff !important;
+}
+
+.snackbar-warning .mdc-snackbar__surface {
+  background-color: #ef6c00 !important;
+  color: #ffffff !important;
+}
+
+.snackbar-success .mdc-snackbar__label,
+.snackbar-error .mdc-snackbar__label,
+.snackbar-info .mdc-snackbar__label,
+.snackbar-warning .mdc-snackbar__label {
+  color: #ffffff !important;
+}
+
+.snackbar-success .mat-mdc-snack-bar-action,
+.snackbar-error .mat-mdc-snack-bar-action,
+.snackbar-info .mat-mdc-snack-bar-action,
+.snackbar-warning .mat-mdc-snack-bar-action {
+  color: #ffffff !important;
+}
