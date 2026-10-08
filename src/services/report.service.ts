@@ -3,11 +3,18 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { app_config } from '../app/core/config/app.config';
 
+export interface SalesTrend {
+  date: string;
+  sales: number;
+}
+
 export interface OverviewResponse {
   totalSales: number;
   transactionCount: number;
   averageBill: number;
   customerCount: number;
+  salesTrend: SalesTrend[];
+  paymentBreakdown: PaymentBreakdown[];
 }
 
 export interface TransactionItem {
@@ -55,6 +62,12 @@ export interface TransactionFilters {
   search?: string;
   page?: number;
   limit?: number;
+}
+
+export interface PaymentBreakdown {
+  paymentType: string;
+  amount: number;
+  transactionCount: number;
 }
 
 @Injectable({

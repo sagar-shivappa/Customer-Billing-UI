@@ -7,7 +7,7 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
     route: '/',
   },
   {
-    label: 'Add Products',
+    label: 'Add / Edit Products',
     icon: 'assignment_add',
     route: '/products',
   },

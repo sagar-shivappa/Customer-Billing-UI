@@ -1,7 +1,7 @@
 <div class="overview-page">
   <!-- =========================
-         Header
-    ========================== -->
+       Header
+  ========================== -->
 
   <div class="page-header">
     <div>
@@ -17,8 +17,8 @@
   </div>
 
   <!-- =========================
-         Filters
-    ========================== -->
+       Filters
+  ========================== -->
 
   <mat-card class="filter-card">
     <div class="filter-row">
@@ -29,13 +29,10 @@
           [ngModel]="selectedFilter()"
           (ngModelChange)="selectedFilter.set($event); onFilterChange()"
         >
-          <mat-option value="today"> Today </mat-option>
-
-          <mat-option value="week"> This Week </mat-option>
-
-          <mat-option value="month"> This Month </mat-option>
-
-          <mat-option value="custom"> Custom Range </mat-option>
+          <mat-option value="today">Today</mat-option>
+          <mat-option value="week">This Week</mat-option>
+          <mat-option value="month">This Month</mat-option>
+          <mat-option value="custom">Custom Range</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -82,36 +79,10 @@
     </div>
   </mat-card>
 
-  <!-- =========================
-         Loading
-    ========================== -->
-
-  @if (loading()) {
-    <div class="loading-container">
-      <mat-spinner diameter="40" />
-
-      <p>Loading overview...</p>
-    </div>
-  }
-
-  <!-- =========================
-         Error
-    ========================== -->
-
-  @if (errorMessage()) {
-    <mat-card class="error-card">
-      <mat-icon>error_outline</mat-icon>
-
-      <span>
-        {{ errorMessage() }}
-      </span>
-    </mat-card>
-  }
-
-  @if (!loading() && overview(); as data) {
+  @if (overview(); as data) {
     <!-- =========================
-           Summary Cards
-      ========================== -->
+         Summary Cards
+    ========================== -->
 
     <div class="summary-grid">
       <mat-card class="summary-card">
@@ -120,7 +91,7 @@
         </div>
 
         <div class="summary-content">
-          <span class="summary-label"> Total Sales </span>
+          <span class="summary-label">Total Sales</span>
 
           <strong class="summary-value"> ₹{{ data.totalSales | number: '1.2-2' }} </strong>
         </div>
@@ -132,7 +103,7 @@
         </div>
 
         <div class="summary-content">
-          <span class="summary-label"> Transactions </span>
+          <span class="summary-label">Transactions</span>
 
           <strong class="summary-value">
             {{ data.transactionCount }}
@@ -146,7 +117,7 @@
         </div>
 
         <div class="summary-content">
-          <span class="summary-label"> Average Bill </span>
+          <span class="summary-label">Average Bill</span>
 
           <strong class="summary-value"> ₹{{ data.averageBill | number: '1.2-2' }} </strong>
         </div>
@@ -158,7 +129,7 @@
         </div>
 
         <div class="summary-content">
-          <span class="summary-label"> Customers </span>
+          <span class="summary-label">Customers</span>
 
           <strong class="summary-value">
             {{ data.customerCount }}
@@ -168,41 +139,53 @@
     </div>
 
     <!-- =========================
-           Sales Trend
-      ========================== -->
+         Sales Trend
+    ========================== -->
 
     <mat-card class="section-card">
       <mat-card-header>
-        <mat-card-title> Sales Trend </mat-card-title>
+        <mat-card-title>Sales Trend</mat-card-title>
 
         <mat-card-subtitle> Sales performance over the selected period </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <div class="chart-placeholder">
-          <mat-icon>show_chart</mat-icon>
+        @if (data.salesTrend.length) {
+          <div class="sales-chart">
+            <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" type="line">
+            </canvas>
+          </div>
+        } @else {
+          <div class="chart-placeholder">
+            <mat-icon>show_chart</mat-icon>
 
-          <p>Sales trend will be displayed here.</p>
-        </div>
+            <p>No sales data available for this period.</p>
+          </div>
+        }
       </mat-card-content>
     </mat-card>
 
     <!-- =========================
-           Payment Breakdown
-      ========================== -->
+         Payment Breakdown
+    ========================== -->
 
     <mat-card class="section-card">
       <mat-card-header>
-        <mat-card-title> Payment Breakdown </mat-card-title>
+        <mat-card-title>Payment Breakdown</mat-card-title>
 
         <mat-card-subtitle> Payment summary for the selected period </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <div class="chart-placeholder">
-          <mat-icon>pie_chart</mat-icon>
-
-          <p>Payment breakdown will be displayed here.</p>
+        <div class="payment-chart">
+          @if (data.paymentBreakdown.length) {
+            <canvas baseChart [data]="paymentChartData" type="doughnut"></canvas>
+          } @else {
+            <div class="chart-placeholder">
+              <mat-icon>pie_chart</mat-icon>
+              <p>No payment data available.</p>
+            </div>
+          }
         </div>
       </mat-card-content>
     </mat-card>
