@@ -1,0 +1,198 @@
+<section class="products-report">
+  <header class="report-header">
+    <div>
+      <h2>Products Report</h2>
+      <p>Review product sales, estimated profit and current stock.</p>
+    </div>
+
+    <button mat-stroked-button (click)="loadReport()">Refresh</button>
+  </header>
+
+  <section class="summary-grid">
+    <article class="summary-card">
+      <span>Total Products</span>
+      <strong>{{ summary?.productCount ?? 0 }}</strong>
+    </article>
+
+    <article class="summary-card">
+      <span>Quantity Sold</span>
+      <strong>{{ summary?.totalQuantitySold ?? 0 | number }}</strong>
+    </article>
+
+    <article class="summary-card">
+      <span>Total Revenue</span>
+      <strong>
+        {{ summary?.totalRevenue ?? 0 | currency: 'INR' : 'symbol' : '1.2-2' }}
+      </strong>
+    </article>
+
+    <article class="summary-card">
+      <span>Estimated Profit</span>
+      <strong>
+        {{ summary?.estimatedProfit ?? 0 | currency: 'INR' : 'symbol' : '1.2-2' }}
+      </strong>
+    </article>
+
+    <article class="summary-card warning">
+      <span>Low Stock</span>
+      <strong>{{ summary?.lowStockCount ?? 0 }}</strong>
+    </article>
+
+    <article class="summary-card danger">
+      <span>Out of Stock</span>
+      <strong>{{ summary?.outOfStockCount ?? 0 }}</strong>
+    </article>
+  </section>
+  <section class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>From date</mat-label>
+      <input matInput [matDatepicker]="fromPicker" [(ngModel)]="fromDate" />
+      <mat-datepicker-toggle matSuffix [for]="fromPicker" />
+      <mat-datepicker #fromPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>To date</mat-label>
+      <input matInput [matDatepicker]="toPicker" [(ngModel)]="toDate" />
+      <mat-datepicker-toggle matSuffix [for]="toPicker" />
+      <mat-datepicker #toPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select [(ngModel)]="selectedCategory">
+        <mat-option value="">All categories</mat-option>
+        @for (category of categories; track category) {
+          <mat-option [value]="category">{{ category }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search products</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchText"
+        placeholder="Product name or code"
+        (keyup.enter)="applyFilters()"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Sort by</mat-label>
+      <mat-select [(ngModel)]="sortBy">
+        <mat-option value="revenue">Revenue</mat-option>
+        <mat-option value="quantitySold">Quantity sold</mat-option>
+        <mat-option value="stock">Stock</mat-option>
+        <mat-option value="estimatedProfit">Estimated profit</mat-option>
+        <mat-option value="productName">Product name</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Sort order</mat-label>
+      <mat-select [(ngModel)]="sortOrder">
+        <mat-option value="desc">Highest first / Z–A</mat-option>
+        <mat-option value="asc">Lowest first / A–Z</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filter-actions">
+      <button mat-flat-button color="primary" (click)="applyFilters()">Apply Filters</button>
+
+      <button mat-stroked-button (click)="resetFilters()">Reset</button>
+    </div>
+  </section>
+
+  @if (errorMessage) {
+    <div class="error-message" role="alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <section class="table-section">
+    <div class="table-heading">
+      <h3>Product Performance</h3>
+      <span>{{ products.length }} products</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="products" class="products-table">
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let product">
+            <div class="product-name">{{ product.productName }}</div>
+            <div class="product-code">{{ product.productCode }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.category || '—' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantitySold">
+          <th mat-header-cell *matHeaderCellDef>Qty Sold</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.totalQuantitySold | number }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="revenue">
+          <th mat-header-cell *matHeaderCellDef>Revenue</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.totalRevenue | currency: 'INR' : 'symbol' : '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estimatedProfit">
+          <th mat-header-cell *matHeaderCellDef>Est. Profit</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.estimatedProfit | currency: 'INR' : 'symbol' : '1.2-2' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stock">
+          <th mat-header-cell *matHeaderCellDef>Current Stock</th>
+          <td mat-cell *matCellDef="let product">
+            {{ product.stock }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Stock Status</th>
+          <td mat-cell *matCellDef="let product">
+            <span
+              class="status"
+              [class.in-stock]="product.stockStatus === 'In stock'"
+              [class.low-stock]="product.stockStatus === 'Low stock'"
+              [class.out-of-stock]="product.stockStatus === 'Out of stock'"
+            >
+              {{ product.stockStatus }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Product Status</th>
+          <td mat-cell *matCellDef="let product">
+            <span class="active-status" [class.inactive]="!product.isActive">
+              {{ product.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="empty-cell" [attr.colspan]="displayedColumns.length">
+            No products found for the selected filters.
+          </td>
+        </tr>
+      </table>
+    </div>
+  </section>
+</section>

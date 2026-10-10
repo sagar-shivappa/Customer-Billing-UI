@@ -17,6 +17,12 @@ export interface OverviewResponse {
   paymentBreakdown: PaymentBreakdown[];
 }
 
+export interface PaymentBreakdown {
+  paymentType: string;
+  amount: number;
+  transactionCount: number;
+}
+
 export interface TransactionItem {
   productCode: string;
   productName: string;
@@ -64,17 +70,65 @@ export interface TransactionFilters {
   limit?: number;
 }
 
-export interface PaymentBreakdown {
-  paymentType: string;
-  amount: number;
-  transactionCount: number;
+export interface ProductsReportSummary {
+  productCount: number;
+  totalQuantitySold: number;
+  totalRevenue: number;
+  estimatedProfit: number;
+  lowStockCount: number;
+  outOfStockCount: number;
 }
+
+export type ProductStockStatus = 'In stock' | 'Low stock' | 'Out of stock';
+
+export interface ProductReportItem {
+  _id: string;
+  productName: string;
+  productCode: string;
+  category: string;
+  purchasePrice: number;
+  sellingPrice: number;
+  stock: number;
+  isActive: boolean;
+  totalQuantitySold: number;
+  totalRevenue: number;
+  estimatedProfit: number;
+  stockStatus: ProductStockStatus;
+}
+
+export interface ProductsReportData {
+  summary: ProductsReportSummary;
+  products: ProductReportItem[];
+}
+
+export interface ProductsReportResponse {
+  success: boolean;
+  message: string;
+  data: ProductsReportData;
+}
+
+export interface ProductsReportFilters {
+  from?: string;
+  to?: string;
+  category?: string;
+  search?: string;
+  sortBy?: 'revenue' | 'quantitySold' | 'stock' | 'estimatedProfit' | 'productName';
+  sortOrder?: 'asc' | 'desc';
+}
+
+// =========================
+// Reports Service
+// =========================
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReportsService {
   private readonly http = inject(HttpClient);
+
+  // =========================
+  // Overview
+  // =========================
 
   getOverview(from: string, to: string): Observable<OverviewResponse> {
     const params = new HttpParams().set('from', from).set('to', to);
@@ -83,6 +137,10 @@ export class ReportsService {
       params,
     });
   }
+
+  // =========================
+  // Transactions
+  // =========================
 
   getTransactions(filters: TransactionFilters): Observable<TransactionsResponse> {
     let params = new HttpParams();
@@ -95,6 +153,25 @@ export class ReportsService {
 
     return this.http.get<TransactionsResponse>(
       `${app_config.API_BASE_URL}/api/reports/transactions`,
+      { params },
+    );
+  }
+
+  // =========================
+  // Products Report
+  // =========================
+
+  getProductsReport(filters: ProductsReportFilters = {}): Observable<ProductsReportResponse> {
+    let params = new HttpParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, String(value));
+      }
+    });
+
+    return this.http.get<ProductsReportResponse>(
+      `${app_config.API_BASE_URL}/api/reports/products`,
       { params },
     );
   }

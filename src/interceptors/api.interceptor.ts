@@ -6,30 +6,19 @@ import { LoaderService } from '../services/loader.service';
 import { NotificationService } from '../services/notification.service';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-  const loaderService = inject(LoaderService);
   const notificationService = inject(NotificationService);
 
-  loaderService.show();
-
   return next(req).pipe(
-    filter((event) => event.type === HttpEventType.Response),
-
-    tap(() => {
-      if (req.method !== 'GET') {
-        notificationService.success(getSuccessMessage(req.method));
-      }
-    }),
-
-    catchError((error: HttpErrorResponse) => {
-      console.error('API Error:', error);
-
-      notificationService.error(getErrorMessage(error));
-
-      return throwError(() => error);
-    }),
-
-    finalize(() => {
-      loaderService.hide();
+    tap({
+      next: (event) => {
+        if (event.type === HttpEventType.Response && req.method !== 'GET') {
+          notificationService.success(getSuccessMessage(req.method));
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('API Error:', error);
+        notificationService.error(getErrorMessage(error));
+      },
     }),
   );
 };

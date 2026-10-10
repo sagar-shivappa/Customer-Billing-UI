@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
@@ -77,7 +84,7 @@ Chart.register(
   styleUrl: './report-overview.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportOverview {
+export class ReportOverview implements OnInit {
   private readonly reportsService = inject(ReportsService);
 
   readonly selectedFilter = signal<DateFilter>('today');
@@ -183,7 +190,9 @@ export class ReportOverview {
     ],
   };
 
-  constructor() {
+  // Keep all your existing properties and methods.
+
+  ngOnInit(): void {
     this.loadOverview();
   }
 

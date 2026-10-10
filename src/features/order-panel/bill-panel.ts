@@ -126,8 +126,9 @@ export class BillPanel {
   order() {
     this.billingService.customerDetails.set({
       customerId: this.customerForm.value.customerId ?? '',
-      paymentType: this.customerForm.value.paymentType ?? 'cash',
+      paymentType: this.customerForm.value.paymentType ?? 'Cash',
     });
     this.billingService.order();
+    this.clearOrder();
   }
 }
