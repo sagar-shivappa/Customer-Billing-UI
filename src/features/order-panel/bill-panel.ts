@@ -118,9 +118,13 @@ export class BillPanel {
     this.billingService.removeItem(productCode);
   }
 
-  clearOrder() {
+  clearOrder(): void {
     this.billingService.clearOrder();
-    this.customerForm.reset();
+
+    this.customerForm.reset({
+      customerId: '',
+      paymentType: 'Cash',
+    });
   }
 
   order() {

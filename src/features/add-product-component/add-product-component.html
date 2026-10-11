@@ -85,7 +85,9 @@
             <mat-label>New Category</mat-label>
             <input matInput [ngModel]="newCategory()" (ngModelChange)="newCategory.set($event)" />
           </mat-form-field>
-          <button matButton="outlined" (click)="addNewCategory()">Add Category</button>
+          <button matButton="outlined" [disabled]="!newCategory()" (click)="addNewCategory()">
+            Add Category
+          </button>
         </div>
       }
       <div>
