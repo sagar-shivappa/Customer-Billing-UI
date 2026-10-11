@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, signal, viewChild, ViewChild } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 
@@ -75,6 +75,8 @@ export class CustomerComponent {
     }
   }
 
+  readonly customerFormSection = viewChild<ElementRef<HTMLElement>>('customerFormSection');
+
   /**
    * Customer list
    */
@@ -113,7 +115,7 @@ export class CustomerComponent {
   /**
    * Columns displayed in customer table
    */
-  displayedColumns = ['customerId', 'name', 'phone', 'status', 'actions'];
+  displayedColumns = ['customerId', 'name', 'phone', 'actions'];
 
   /**
    * Customer form
@@ -235,6 +237,13 @@ export class CustomerComponent {
       address: customer.address || '',
       pincode: customer.pincode || '',
       gstin: customer.gstin || '',
+    });
+
+    setTimeout(() => {
+      this.customerFormSection()?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
     });
   }
 

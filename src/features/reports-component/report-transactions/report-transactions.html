@@ -93,8 +93,6 @@
 
           <mat-option value="UPI"> UPI </mat-option>
 
-          <mat-option value="Card"> Card </mat-option>
-
           <mat-option value="Credit"> Credit </mat-option>
         </mat-select>
       </mat-form-field>
@@ -221,9 +219,22 @@
             <th mat-header-cell *matHeaderCellDef>Payment</th>
 
             <td mat-cell *matCellDef="let transaction">
-              <span class="payment-badge">
-                {{ transaction.paymentType }}
-              </span>
+              @if (transaction.paymentType === 'Credit') {
+                <mat-form-field appearance="outline" class="payment-select">
+                  <mat-select
+                    [value]="getPendingPaymentType(transaction)"
+                    (selectionChange)="onPaymentTypeChange(transaction, $event.value)"
+                  >
+                    <mat-option value="Credit">Credit</mat-option>
+                    <mat-option value="Cash">Cash</mat-option>
+                    <mat-option value="UPI">UPI</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              } @else {
+                <span class="payment-badge">
+                  {{ transaction.paymentType }}
+                </span>
+              }
             </td>
           </ng-container>
 
@@ -242,14 +253,18 @@
                 <mat-icon> visibility </mat-icon>
               </button>
 
-              <button
-                mat-icon-button
-                type="button"
-                aria-label="Print transaction"
-                (click)="printTransaction(transaction)"
-              >
-                <mat-icon> print </mat-icon>
-              </button>
+              @if (transaction.paymentType === 'Credit') {
+                <button
+                  mat-icon-button
+                  type="button"
+                  aria-label="Update transaction"
+                  matTooltip="Update payment"
+                  [disabled]="!pendingPaymentChanges()[transaction._id]"
+                  (click)="updateTransaction(transaction)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+              }
             </td>
           </ng-container>
 
@@ -363,7 +378,6 @@
             <td mat-cell *matCellDef="let item">₹{{ item.totalPrice | number: '1.2-2' }}</td>
           </ng-container>
 
-          Header
           <tr mat-header-row *matHeaderRowDef="itemDisplayedColumns"></tr>
 
           <!-- Rows -->

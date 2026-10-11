@@ -8,6 +8,10 @@ import { ProductService } from '../../services/product.service';
 import { MatButtonModule } from '@angular/material/button';
 import { Product } from '../../models/product.model';
 import { OwnerProfileService } from '../../services/owner.service';
+import { Router } from '@angular/router';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-product-catalog',
@@ -19,6 +23,7 @@ import { OwnerProfileService } from '../../services/owner.service';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatTooltip,
   ],
   templateUrl: './product-catalog-component.html',
   styleUrl: './product-catalog-component.css',
@@ -26,7 +31,8 @@ import { OwnerProfileService } from '../../services/owner.service';
 export class ProductCatalogComponent implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly ownerService = inject(OwnerProfileService);
-
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
   readonly products = this.productService.products;
 
   readonly search = signal('');
@@ -35,8 +41,10 @@ export class ProductCatalogComponent implements OnInit {
 
   readonly selectedCategory = signal<string>('All');
 
+  readonly isProductsRoute = computed(() => this.router.url === '/products');
+
   ngOnInit(): void {
-    this.productService.getAllProducts();
+    this.productService.getAll();
   }
 
   selectCategory(category: string): void {
@@ -63,5 +71,32 @@ export class ProductCatalogComponent implements OnInit {
 
   selectProduct(product: Product): void {
     this.productSelected.emit(product);
+  }
+
+  deleteProduct(product: Product): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Product?',
+        message: `Are you sure you want to delete "${product.productName}"?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.performDelete(product);
+      }
+    });
+  }
+
+  private performDelete(product: Product): void {
+    this.productService.delete(product).subscribe({
+      next: () => {
+        this.productService.removeFromList(product._id!);
+      },
+      error: (error) => {
+        console.error('Failed to delete product', error);
+      },
+    });
   }
 }

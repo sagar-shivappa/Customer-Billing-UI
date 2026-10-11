@@ -37,6 +37,19 @@
       <mat-card-content>
         <div class="product-name">
           {{ product.productName }}
+
+          @if (isProductsRoute()) {
+            <button
+              mat-icon-button
+              type="button"
+              color="warn"
+              aria-label="Delete product"
+              [matTooltip]="'Delete ' + product.productName"
+              (click)="$event.stopPropagation(); deleteProduct(product)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
         </div>
 
         <div class="product-code">Code : {{ product.productCode }}</div>

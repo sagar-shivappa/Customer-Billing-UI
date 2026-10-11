@@ -141,9 +141,9 @@ export class AddProductComponent implements AfterViewInit {
     if (this.formType === 'new') {
       const { _id, ...newProduct } = product;
 
-      this.productService.addProduct(newProduct);
+      this.productService.add(newProduct);
     } else if (this.formType === 'update') {
-      this.productService.updateProduct(product);
+      this.productService.update(product);
     }
 
     this.clear();

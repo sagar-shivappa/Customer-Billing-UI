@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Product } from '../models/product.model';
-import { PRODUCT_CATEGORIES } from '../app/core/config/product.categories.config';
 import { app_config } from '../app/core/config/app.config';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface ProductResponse {
   success: boolean;
@@ -19,7 +19,7 @@ export class ProductService {
 
   readonly products = this._products.asReadonly();
 
-  addProduct(product: Product): void {
+  add(product: Product): void {
     this.http.post(`${app_config.API_BASE_URL}/api/products`, product).subscribe({
       next: () => {
         this._products.update((products) => [...products, product]);
@@ -31,7 +31,7 @@ export class ProductService {
     });
   }
 
-  updateProduct(product: Product): void {
+  update(product: Product): void {
     this.http
       .put<Product>(`${app_config.API_BASE_URL}/api/products/${product._id}`, product)
       .subscribe({
@@ -46,7 +46,7 @@ export class ProductService {
       });
   }
 
-  getAllProducts(): void {
+  getAll(): void {
     this.http.get<ProductResponse>(`${app_config.API_BASE_URL}/api/products`).subscribe({
       next: (response) => {
         this._products.set([...response.data]);
@@ -56,5 +56,13 @@ export class ProductService {
         console.error('Failed to add product', error);
       },
     });
+  }
+
+  delete(product: Product): Observable<void> {
+    return this.http.delete<void>(`${app_config.API_BASE_URL}/api/products/${product._id}`);
+  }
+
+  removeFromList(productId: string): void {
+    this._products.update((products) => products.filter((product) => product._id !== productId));
   }
 }

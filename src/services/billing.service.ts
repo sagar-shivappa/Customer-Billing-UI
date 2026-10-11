@@ -3,6 +3,29 @@ import { ProductService } from './product.service';
 import { OrderSummary, OrderSummaryItem, Item } from '../models/bill.model';
 import { HttpClient } from '@angular/common/http';
 import { app_config } from '../app/core/config/app.config';
+import { Observable } from 'rxjs';
+
+export type PaymentType = 'Cash' | 'UPI' | 'Credit';
+
+export interface BillingItem {
+  productCode: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface Billing {
+  _id?: string;
+  billNumber: string;
+  customerId: string;
+  items: BillingItem[];
+  grandTotal: number;
+  paymentType: PaymentType;
+  saleDate: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -145,5 +168,11 @@ export class BillingService {
       paymentType: payment.paymentType,
       customerId: payment.customerId,
     };
+  }
+
+  updatePaymentType(billId: string, paymentType: 'Cash' | 'UPI'): Observable<Billing> {
+    return this.http.patch<Billing>(`${app_config.API_BASE_URL}/api/billing/${billId}/payment`, {
+      paymentType,
+    });
   }
 }

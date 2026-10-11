@@ -11,9 +11,11 @@
 
       <mat-select formControlName="paymentType">
         @for (payment of paymentTypes; track payment) {
-          <mat-option [value]="payment">
-            {{ payment }}
-          </mat-option>
+          @if (payment !== 'Credit' || customer()) {
+            <mat-option [value]="payment">
+              {{ payment }}
+            </mat-option>
+          }
         }
       </mat-select>
     </mat-form-field>

@@ -13,30 +13,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ReportsService, TransactionFilters } from '../../../services/report.service';
+import { ReportsService, Transaction, TransactionFilters } from '../../../services/report.service';
 import { finalize } from 'rxjs';
-
-export interface Transaction {
-  billNumber: string;
-  customerId?: string;
-  customerName?: string;
-
-  items: TransactionItem[];
-
-  grandTotal: number;
-  paymentType: string;
-
-  saleDate: string;
-}
-
-export interface TransactionItem {
-  productCode: string;
-  productName: string;
-
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-}
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog';
+import { BillingService } from '../../../services/billing.service';
 
 type DateFilter = 'today' | 'week' | 'month' | 'custom';
 
@@ -68,7 +48,7 @@ type DateFilter = 'today' | 'week' | 'month' | 'custom';
 })
 export class ReportTransactions {
   // Inject your report service here once the endpoint is ready.
-  // private readonly reportsService = inject(ReportsService);
+  private readonly billingService = inject(BillingService);
 
   private readonly dialog = inject(MatDialog);
   private readonly reportsService = inject(ReportsService);
@@ -101,6 +81,7 @@ export class ReportTransactions {
     totalSales: 0,
     averageBill: 0,
   });
+  readonly pendingPaymentChanges = signal<Record<string, 'Cash' | 'UPI'>>({});
 
   // =========================
   // Table
@@ -140,22 +121,6 @@ export class ReportTransactions {
 
       return matchesSearch && matchesPayment;
     });
-  });
-
-  readonly transactionCount = computed(() => this.filteredTransactions().length);
-
-  readonly totalSales = computed(() =>
-    this.filteredTransactions().reduce((total, transaction) => total + transaction.grandTotal, 0),
-  );
-
-  readonly averageBill = computed(() => {
-    const transactions = this.filteredTransactions();
-
-    if (!transactions.length) {
-      return 0;
-    }
-
-    return this.totalSales() / transactions.length;
   });
 
   constructor() {
@@ -307,5 +272,101 @@ export class ReportTransactions {
     this.page.set(event.pageIndex + 1);
     this.pageSize.set(event.pageSize);
     this.loadTransactions();
+  }
+
+  onPaymentTypeChange(transaction: Transaction, paymentType: 'Cash' | 'UPI' | 'Credit'): void {
+    if (transaction.paymentType !== 'Credit') {
+      return;
+    }
+
+    // User selected Credit again → remove any pending change
+    if (paymentType === 'Credit') {
+      this.pendingPaymentChanges.update((changes) => {
+        const updated = { ...changes };
+        delete updated[transaction._id];
+        return updated;
+      });
+
+      return;
+    }
+
+    // Cash or UPI selected
+    this.pendingPaymentChanges.update((changes) => ({
+      ...changes,
+      [transaction._id]: paymentType,
+    }));
+  }
+
+  getPendingPaymentType(transaction: Transaction): 'Cash' | 'UPI' | 'Credit' {
+    return this.pendingPaymentChanges()[transaction._id] ?? transaction.paymentType;
+  }
+
+  updateTransaction(transaction: Transaction): void {
+    if (transaction.paymentType !== 'Credit') {
+      return;
+    }
+
+    const paymentType = this.pendingPaymentChanges()[transaction._id];
+
+    if (!paymentType) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Update Payment?',
+        message: `Mark bill ${transaction.billNumber} as paid via ${paymentType}?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.billingService
+        .updatePaymentType(transaction._id, paymentType)
+        .pipe(finalize(() => this.loading.set(false)))
+        .subscribe({
+          next: () => {
+            // Update the transaction locally
+            this.transactions.update((transactions) =>
+              transactions.map((item) =>
+                item._id === transaction._id
+                  ? {
+                      ...item,
+                      paymentType,
+                    }
+                  : item,
+              ),
+            );
+
+            // Remove pending change
+            this.pendingPaymentChanges.update((changes) => {
+              const updated = { ...changes };
+              delete updated[transaction._id];
+              return updated;
+            });
+
+            // Update currently opened transaction, if any
+            if (this.selectedTransaction()?._id === transaction._id) {
+              this.selectedTransaction.update((item) =>
+                item
+                  ? {
+                      ...item,
+                      paymentType,
+                    }
+                  : null,
+              );
+            }
+          },
+
+          error: (error) => {
+            console.error('Failed to update payment type', error);
+            this.errorMessage.set('Unable to update payment type.');
+          },
+        });
+    });
   }
 }

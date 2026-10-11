@@ -44,6 +44,26 @@
     </article>
   </section>
   <section class="filters">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search products</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchText"
+        placeholder="Product name or code"
+        (keyup.enter)="applyFilters()"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Sort by</mat-label>
+      <mat-select [(ngModel)]="sortBy">
+        <mat-option value="revenue">Revenue</mat-option>
+        <mat-option value="quantitySold">Quantity sold</mat-option>
+        <mat-option value="stock">Stock</mat-option>
+        <mat-option value="estimatedProfit">Estimated profit</mat-option>
+        <mat-option value="productName">Product name</mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>From date</mat-label>
       <input matInput [matDatepicker]="fromPicker" [(ngModel)]="fromDate" />
@@ -65,27 +85,6 @@
         @for (category of categories; track category) {
           <mat-option [value]="category">{{ category }}</mat-option>
         }
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Search products</mat-label>
-      <input
-        matInput
-        [(ngModel)]="searchText"
-        placeholder="Product name or code"
-        (keyup.enter)="applyFilters()"
-      />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Sort by</mat-label>
-      <mat-select [(ngModel)]="sortBy">
-        <mat-option value="revenue">Revenue</mat-option>
-        <mat-option value="quantitySold">Quantity sold</mat-option>
-        <mat-option value="stock">Stock</mat-option>
-        <mat-option value="estimatedProfit">Estimated profit</mat-option>
-        <mat-option value="productName">Product name</mat-option>
       </mat-select>
     </mat-form-field>
 

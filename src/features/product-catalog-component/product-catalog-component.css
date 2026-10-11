@@ -49,10 +49,13 @@
 }
 
 .product-name {
+  display: flex;
   font-size: 18px;
   font-weight: 700;
   color: var(--mat-sys-primary);
   line-height: 1.3;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .product-code {

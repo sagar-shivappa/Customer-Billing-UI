@@ -32,13 +32,13 @@ export interface TransactionItem {
 }
 
 export interface Transaction {
-  _id?: string;
+  _id: string;
   billNumber: string;
   customerId?: string;
   customerName?: string;
   items: TransactionItem[];
   grandTotal: number;
-  paymentType: string;
+  paymentType: 'Cash' | 'UPI' | 'Credit';
   saleDate: string;
 }
 
