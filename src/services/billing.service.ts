@@ -4,6 +4,7 @@ import { OrderSummary, OrderSummaryItem, Item } from '../models/bill.model';
 import { HttpClient } from '@angular/common/http';
 import { app_config } from '../app/core/config/app.config';
 import { Observable } from 'rxjs';
+import { CustomerService } from './customer.service';
 
 export type PaymentType = 'Cash' | 'UPI' | 'Credit';
 
@@ -18,7 +19,7 @@ export interface BillingItem {
 export interface Billing {
   _id?: string;
   billNumber: string;
-  customerId: string;
+  customerName: string;
   items: BillingItem[];
   grandTotal: number;
   paymentType: PaymentType;
@@ -27,19 +28,29 @@ export interface Billing {
   updatedAt?: string;
 }
 
+export interface BillingResponse {
+  success: boolean;
+  message: string;
+  data: Billing;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class BillingService {
   private readonly productService = inject(ProductService);
+  private readonly customerService = inject(CustomerService);
   private readonly http = inject(HttpClient);
   private readonly _orderedItems = signal<Item[]>([]);
 
   readonly orderedItems = this._orderedItems.asReadonly();
 
-  customerDetails = signal<{ customerId: string; paymentType: string }>({
+  customerDetails = signal<{
+    customerId: string;
+    paymentType: PaymentType;
+  }>({
     customerId: '',
-    paymentType: '',
+    paymentType: 'Cash',
   });
 
   readonly orderSummary = computed<OrderSummary>(() => {
@@ -134,18 +145,10 @@ export class BillingService {
     this._orderedItems.update((items) => items.filter((item) => item.productCode !== productCode));
   }
 
-  order() {
+  order(): Observable<BillingResponse> {
     const billPayload = this.buildBillPayload(this.orderSummary(), this.customerDetails());
 
-    this.http.post(`${app_config.API_BASE_URL}/api/billing`, billPayload).subscribe({
-      next: (data) => {
-        console.log(data);
-      },
-      error: (error) => {
-        // Don't modify products signal
-        console.error('Failed to add product', error);
-      },
-    });
+    return this.http.post<BillingResponse>(`${app_config.API_BASE_URL}/api/billing`, billPayload);
   }
 
   buildBillPayload(
@@ -166,7 +169,7 @@ export class BillingService {
         quantity: item.quantity,
       })),
       paymentType: payment.paymentType,
-      customerId: payment.customerId,
+      customerName: this.customerService.customer()?.name,
     };
   }
 

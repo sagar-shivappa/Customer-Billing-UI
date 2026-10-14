@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { BillingService } from '../../services/billing.service';
+import { Billing, BillingService, PaymentType } from '../../services/billing.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,10 +9,10 @@ import { MatInputModule } from '@angular/material/input';
 import { app_config } from '../../app/core/config/app.config';
 import { MatSelect, MatOption } from '@angular/material/select';
 import { FormBuilder, ReactiveFormsModule, ɵInternalFormsSharedModule } from '@angular/forms';
-import { Customer } from '../../models/customer.model';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { PrinterService } from '../../services/printer.service';
 
 @Component({
   selector: 'app-bill-panel',
@@ -34,20 +34,19 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 export class BillPanel {
   private readonly billingService = inject(BillingService);
   private readonly fb = inject(FormBuilder);
-  private readonly customerService = inject(CustomerService);
+  protected readonly customerService = inject(CustomerService);
   private readonly router = inject(Router);
+  private readonly printerService = inject(PrinterService);
 
-  customer = signal<Customer | null>(null);
   customerNotFound = signal(false);
-  isCheckingCustomer = signal(false);
 
   readonly orderSummary = this.billingService.orderSummary;
   paymentTypes: string[] = ['Cash', 'UPI', 'Credit'];
   allowPriceEdit = app_config.editable_price;
 
   readonly customerForm = this.fb.group({
-    customerId: [''],
-    paymentType: ['Cash'],
+    customerId: this.fb.control<string>(''),
+    paymentType: this.fb.control<PaymentType>('Cash'),
   });
 
   readonly displayedColumns: Array<'product' | 'quantity' | 'price' | 'total' | 'action'> = [
@@ -58,6 +57,8 @@ export class BillPanel {
     'action',
   ];
 
+  createdBill = signal<Billing | null>(null);
+
   constructor() {
     this.customerForm
       .get('customerId')
@@ -67,30 +68,34 @@ export class BillPanel {
       });
   }
 
+  // async testPrinter(): Promise<void> {
+  //   try {
+  //     await this.printerService.printBill(bill: Billing)
+
+  //     console.log('Receipt printed successfully');
+  //   } catch (error) {
+  //     console.error('Print failed:', error);
+  //   }
+  // }
+
   private lookupCustomer(phone: string): void {
     const value = phone?.trim();
-
-    this.customer.set(null);
+    this.customerService.customer.set(null);
     this.customerNotFound.set(false);
 
     if (!value || value.length !== 10) {
       return;
     }
 
-    this.isCheckingCustomer.set(true);
-
     this.customerService.getCustomerByPhone(value).subscribe({
       next: (customer) => {
-        this.customer.set(customer.data);
+        this.customerService.customer.set(customer.data);
         this.customerNotFound.set(false);
-        this.isCheckingCustomer.set(false);
       },
 
       error: (error) => {
-        this.isCheckingCustomer.set(false);
-
         if (error.status === 404) {
-          this.customer.set(null);
+          this.customerService.customer.set(null);
           this.customerNotFound.set(true);
           return;
         }
@@ -127,12 +132,29 @@ export class BillPanel {
     });
   }
 
-  order() {
+  order(): void {
     this.billingService.customerDetails.set({
       customerId: this.customerForm.value.customerId ?? '',
       paymentType: this.customerForm.value.paymentType ?? 'Cash',
     });
-    this.billingService.order();
-    this.clearOrder();
+
+    this.billingService.order().subscribe({
+      next: (response) => {
+        const bill = response.data;
+        // Bill is already saved successfully
+        this.createdBill.set(bill);
+
+        this.clearOrder();
+
+        // Printing is optional
+        this.printerService.printBill(bill).catch((error) => {
+          console.warn('Bill saved, but receipt could not be printed:', error);
+        });
+      },
+
+      error: (error) => {
+        console.error('Failed to create bill:', error);
+      },
+    });
   }
 }

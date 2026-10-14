@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Customer, CustomerResponse, CustomersResponse } from '../models/customer.model';
@@ -11,6 +11,7 @@ export class CustomerService {
   private http = inject(HttpClient);
 
   private readonly apiUrl = app_config.API_BASE_URL;
+  customer = signal<Customer | null>(null);
 
   /**
    * Get all customers
