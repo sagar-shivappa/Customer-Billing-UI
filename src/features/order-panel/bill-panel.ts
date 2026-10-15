@@ -12,7 +12,7 @@ import { FormBuilder, ReactiveFormsModule, ɵInternalFormsSharedModule } from '@
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { PrinterService } from '../../services/printer.service';
+import { PrinterService } from '../../services/printer/printer.service';
 
 @Component({
   selector: 'app-bill-panel',

@@ -6,6 +6,7 @@ import { MatCardContent, MatCardHeader, MatCardTitle, MatCard } from '@angular/m
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { PrinterSettingsComponent } from '../printer/printer-settings.component';
 
 @Component({
   selector: 'app-owner-profile-component',
@@ -20,6 +21,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatInputModule,
     MatButtonModule,
     MatSlideToggleModule,
+    PrinterSettingsComponent,
   ],
   templateUrl: './owner-profile-component.html',
   styleUrl: './owner-profile-component.css',

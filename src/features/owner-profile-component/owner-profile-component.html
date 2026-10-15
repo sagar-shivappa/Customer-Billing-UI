@@ -34,31 +34,33 @@
           }
         </mat-form-field>
 
-        <!-- Pincode -->
-        <mat-form-field appearance="outline">
-          <mat-label>Pincode</mat-label>
+        <div class="form-row">
+          <!-- Pincode -->
+          <mat-form-field appearance="outline">
+            <mat-label>Pincode</mat-label>
 
-          <input
-            matInput
-            type="text"
-            maxlength="6"
-            formControlName="pinCode"
-            autocomplete="postal-code"
-          />
+            <input
+              matInput
+              type="text"
+              maxlength="6"
+              formControlName="pinCode"
+              autocomplete="postal-code"
+            />
 
-          <mat-hint align="end"> {{ profileForm.controls.pinCode.value.length }}/6 </mat-hint>
+            <mat-hint align="end"> {{ profileForm.controls.pinCode.value.length }}/6 </mat-hint>
 
-          @if (profileForm.controls.pinCode.hasError('required')) {
-            <mat-error>Pincode is required.</mat-error>
-          }
-        </mat-form-field>
+            @if (profileForm.controls.pinCode.hasError('required')) {
+              <mat-error>Pincode is required.</mat-error>
+            }
+          </mat-form-field>
 
-        <!-- GSTIN -->
-        <mat-form-field appearance="outline">
-          <mat-label>GSTIN</mat-label>
+          <!-- GSTIN -->
+          <mat-form-field appearance="outline">
+            <mat-label>GSTIN</mat-label>
 
-          <input matInput formControlName="gstin" placeholder="Optional" autocomplete="off" />
-        </mat-form-field>
+            <input matInput formControlName="gstin" placeholder="Optional" autocomplete="off" />
+          </mat-form-field>
+        </div>
 
         <div class="stock-management">
           <mat-slide-toggle formControlName="stockManagement">
@@ -85,3 +87,5 @@
     </form>
   </mat-card-content>
 </mat-card>
+
+<app-printer-settings />

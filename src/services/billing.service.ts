@@ -17,8 +17,9 @@ export interface BillingItem {
 }
 
 export interface Billing {
-  _id?: string;
+  _id: string;
   billNumber: string;
+  customerId: string;
   customerName: string;
   items: BillingItem[];
   grandTotal: number;
@@ -169,6 +170,7 @@ export class BillingService {
         quantity: item.quantity,
       })),
       paymentType: payment.paymentType,
+      customerId: payment.customerId,
       customerName: this.customerService.customer()?.name,
     };
   }

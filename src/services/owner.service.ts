@@ -24,11 +24,10 @@ export class OwnerProfileService {
   saveProfile(profile: OwnerProfile): void {
     if (this._profileExists()) {
       this.http
-        .put<OwnerProfile>(`${app_config.API_BASE_URL}/api/owner`, profile)
+        .put<OwnerProfileResponse>(`${app_config.API_BASE_URL}/api/owner`, profile)
         .pipe(
-          tap((updatedProfile) => {
-            this._profile.set(updatedProfile);
-            this._profileExists.set(true);
+          tap((updatedProfile: OwnerProfileResponse) => {
+            this._profile.set(updatedProfile.data);
           }),
         )
         .subscribe();

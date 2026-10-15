@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { app_config } from '../app/core/config/app.config';
+import { Billing } from './billing.service';
 
 export interface SalesTrend {
   date: string;
@@ -23,25 +24,6 @@ export interface PaymentBreakdown {
   transactionCount: number;
 }
 
-export interface TransactionItem {
-  productCode: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-}
-
-export interface Transaction {
-  _id: string;
-  billNumber: string;
-  customerId?: string;
-  customerName?: string;
-  items: TransactionItem[];
-  grandTotal: number;
-  paymentType: 'Cash' | 'UPI' | 'Credit';
-  saleDate: string;
-}
-
 export interface TransactionSummary {
   transactionCount: number;
   totalSales: number;
@@ -56,7 +38,7 @@ export interface TransactionPagination {
 }
 
 export interface TransactionsResponse {
-  transactions: Transaction[];
+  transactions: Billing[];
   pagination: TransactionPagination;
   summary: TransactionSummary;
 }

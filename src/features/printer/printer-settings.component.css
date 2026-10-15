@@ -1,0 +1,20 @@
+.printer-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.printer-settings .settings-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.printer-settings mat-form-field {
+  width: 100%;
+}
+
+.printer-settings button {
+  align-self: flex-start;
+}

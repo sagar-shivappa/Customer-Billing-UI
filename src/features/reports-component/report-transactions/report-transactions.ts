@@ -13,10 +13,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ReportsService, Transaction, TransactionFilters } from '../../../services/report.service';
+import { ReportsService, TransactionFilters } from '../../../services/report.service';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog';
-import { BillingService } from '../../../services/billing.service';
+import { Billing, BillingService } from '../../../services/billing.service';
+import { PrinterService } from '../../../services/printer/printer.service';
 
 type DateFilter = 'today' | 'week' | 'month' | 'custom';
 
@@ -49,7 +50,7 @@ type DateFilter = 'today' | 'week' | 'month' | 'custom';
 export class ReportTransactions {
   // Inject your report service here once the endpoint is ready.
   private readonly billingService = inject(BillingService);
-
+  private readonly printerService = inject(PrinterService);
   private readonly dialog = inject(MatDialog);
   private readonly reportsService = inject(ReportsService);
 
@@ -59,7 +60,7 @@ export class ReportTransactions {
   readonly totalRecords = signal(0);
   readonly totalPages = signal(0);
 
-  readonly transactions = signal<Transaction[]>([]);
+  readonly transactions = signal<Billing[]>([]);
 
   readonly loading = signal(false);
 
@@ -75,7 +76,7 @@ export class ReportTransactions {
 
   readonly toDate = signal<string>('');
 
-  readonly selectedTransaction = signal<Transaction | null>(null);
+  readonly selectedTransaction = signal<Billing | null>(null);
   readonly summary = signal({
     transactionCount: 0,
     totalSales: 0,
@@ -246,7 +247,7 @@ export class ReportTransactions {
   // Transaction
   // =========================
 
-  viewTransaction(transaction: Transaction): void {
+  viewTransaction(transaction: Billing): void {
     this.selectedTransaction.set(transaction);
   }
 
@@ -254,17 +255,20 @@ export class ReportTransactions {
     this.selectedTransaction.set(null);
   }
 
-  printTransaction(transaction: Transaction): void {
-    console.log('Print transaction:', transaction.billNumber);
+  printTransaction(transaction: Billing): void {
+    console.log('Print transaction:', transaction);
 
     // Printing can be implemented next.
+    this.printerService.printBill(transaction).catch((error) => {
+      console.error('Failed to print bill:', error);
+    });
   }
 
   // =========================
   // Helpers
   // =========================
 
-  getItemCount(transaction: Transaction): number {
+  getItemCount(transaction: Billing): number {
     return transaction.items.reduce((count, item) => count + item.quantity, 0);
   }
 
@@ -274,7 +278,7 @@ export class ReportTransactions {
     this.loadTransactions();
   }
 
-  onPaymentTypeChange(transaction: Transaction, paymentType: 'Cash' | 'UPI' | 'Credit'): void {
+  onPaymentTypeChange(transaction: Billing, paymentType: 'Cash' | 'UPI' | 'Credit'): void {
     if (transaction.paymentType !== 'Credit') {
       return;
     }
@@ -297,11 +301,11 @@ export class ReportTransactions {
     }));
   }
 
-  getPendingPaymentType(transaction: Transaction): 'Cash' | 'UPI' | 'Credit' {
+  getPendingPaymentType(transaction: Billing): 'Cash' | 'UPI' | 'Credit' {
     return this.pendingPaymentChanges()[transaction._id] ?? transaction.paymentType;
   }
 
-  updateTransaction(transaction: Transaction): void {
+  updateTransaction(transaction: Billing): void {
     if (transaction.paymentType !== 'Credit') {
       return;
     }
