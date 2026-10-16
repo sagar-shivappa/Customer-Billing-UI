@@ -1,5 +1,6 @@
 .page-container {
   padding: 24px;
+  color: var(--app-text);
 }
 
 .form-card {
@@ -23,7 +24,7 @@
   border: none;
   padding: 0;
   margin: 0;
-  color: var(--mat-sys-primary);
+  color: var(--app-primary);
   font: inherit;
   cursor: pointer;
   text-decoration: underline;
@@ -34,7 +35,7 @@
 }
 
 .link-button:focus-visible {
-  outline: 2px solid var(--mat-sys-primary);
+  outline: 2px solid var(--app-primary);
   outline-offset: 2px;
 }
 
@@ -46,4 +47,8 @@
 .action {
   display: flex;
   justify-content: space-between;
+}
+
+mat-card-header {
+  padding: 5px;
 }

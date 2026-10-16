@@ -1,5 +1,6 @@
 .transactions-page {
   padding: 24px;
+  color: var(--app-text);
 }
 
 .page-header {
@@ -17,7 +18,7 @@
 
   p {
     margin: 6px 0 0;
-    opacity: 0.7;
+    color: var(--app-text-muted);
   }
 }
 
@@ -66,7 +67,7 @@
 
     border-radius: 50%;
 
-    background: var(--mat-sys-surface-container-high);
+    background: var(--app-surface-container-high);
   }
 
   div {
@@ -77,7 +78,7 @@
 
   span {
     font-size: 14px;
-    opacity: 0.7;
+    color: var(--app-text-muted);
   }
 
   strong {
@@ -111,7 +112,7 @@ td {
   gap: 3px;
 
   small {
-    opacity: 0.6;
+    color: var(--app-text-muted);
   }
 }
 
@@ -122,7 +123,8 @@ td {
 
   font-size: 12px;
 
-  background: var(--mat-sys-surface-container-high);
+  background: var(--app-surface-container-high);
+  color: var(--app-text);
 }
 
 .empty-cell {
@@ -130,7 +132,7 @@ td {
 
   padding: 48px !important;
 
-  opacity: 0.6;
+  color: var(--app-text-muted);
 
   mat-icon {
     display: block;
@@ -164,6 +166,9 @@ td {
   padding: 16px;
 
   margin-bottom: 24px;
+
+  background: color-mix(in srgb, var(--app-error) 8%, transparent);
+  color: var(--app-error);
 }
 
 .details-overlay {
@@ -174,7 +179,7 @@ td {
   display: flex;
   justify-content: flex-end;
 
-  background: rgb(0 0 0 / 20%);
+  background: color-mix(in srgb, var(--app-text) 20%, transparent);
 
   z-index: 1000;
 }
@@ -189,6 +194,9 @@ td {
   border-radius: 0;
 
   padding: 24px;
+
+  background: var(--app-surface);
+  color: var(--app-text);
 }
 
 .details-header {
@@ -203,7 +211,7 @@ td {
   }
 
   span {
-    opacity: 0.7;
+    color: var(--app-text-muted);
   }
 }
 
@@ -218,7 +226,7 @@ td {
 
   margin-bottom: 24px;
 
-  background: var(--mat-sys-surface-container);
+  background: var(--app-surface-container);
 
   border-radius: 12px;
 
@@ -230,7 +238,7 @@ td {
 
   span {
     font-size: 12px;
-    opacity: 0.65;
+    color: var(--app-text-muted);
   }
 }
 
@@ -245,75 +253,11 @@ td {
 
     text-align: left;
 
-    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    border-bottom: 1px solid var(--app-outline-variant);
   }
 
   th {
     font-size: 13px;
-    opacity: 0.7;
-  }
-
-  td:first-child {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  td small {
-    opacity: 0.6;
-  }
-}
-
-.details-total {
-  display: flex;
-
-  justify-content: space-between;
-
-  padding: 20px 12px;
-
-  font-size: 18px;
-
-  strong {
-    font-size: 22px;
-  }
-}
-
-.details-actions {
-  display: flex;
-
-  justify-content: flex-end;
-
-  padding-top: 16px;
-}
-
-@media (max-width: 900px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .details-info {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .transactions-page {
-    padding: 16px;
-  }
-
-  .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .filter-row {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .filter-row mat-form-field,
-  .filter-row button,
-  .search-field {
-    width: 100%;
+    color: var(--app-text-muted);
   }
 }

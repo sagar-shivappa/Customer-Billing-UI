@@ -14,7 +14,7 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
 
   {
     label: 'Reports',
-    icon: 'monitoring',
+    icon: 'analytics',
     route: '/reports',
   },
   {
@@ -23,13 +23,13 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
     route: '/customer',
   },
   {
-    label: 'Owner',
+    label: 'Company',
     icon: 'manage_accounts',
-    route: '/owner',
+    route: '/company',
   },
   {
     label: 'Support',
-    icon: 'support',
+    icon: 'support_agent',
     route: '/support',
   },
 ];

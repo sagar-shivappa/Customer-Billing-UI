@@ -7,6 +7,6 @@
   align-items: center;
   justify-content: center;
 
-  background: rgba(255, 255, 255, 0.45);
+  background: color-mix(in srgb, var(--app-surface) 45%, transparent);
   backdrop-filter: blur(2px);
 }

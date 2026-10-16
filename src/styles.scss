@@ -5,16 +5,96 @@ html {
 
   @include mat.theme(
     (
-      color: mat.$azure-palette,
+      color: (
+        primary: mat.$cyan-palette,
+        tertiary: mat.$green-palette,
+      ),
       typography: Roboto,
       density: 0,
     )
   );
 }
 
+/* =========================
+   Application Theme
+========================= */
+
+:root {
+  /* Brand gradient */
+  --app-primary-start: #1e5d65;
+  --app-primary-middle: #57c785;
+  --app-primary-end: #eddd53;
+
+  --app-primary-gradient: linear-gradient(
+    90deg,
+    var(--app-primary-start) 0%,
+    var(--app-primary-middle) 50%,
+    var(--app-primary-end) 100%
+  );
+
+  /* Primary */
+  --app-primary: var(--app-primary-start);
+  --app-on-primary: #ffffff;
+
+  /* Surfaces */
+  --app-surface: var(--mat-sys-surface);
+  --app-surface-container: var(--mat-sys-surface-container);
+  --app-surface-container-high: var(--mat-sys-surface-container-high);
+
+  /* Text */
+  --app-text: var(--mat-sys-on-surface);
+  --app-text-muted: var(--mat-sys-on-surface-variant);
+
+  /* Borders */
+  --app-outline: var(--mat-sys-outline);
+  --app-outline-variant: var(--mat-sys-outline-variant);
+
+  /* Semantic colors */
+  --app-error: var(--mat-sys-error);
+  --app-on-error: var(--mat-sys-on-error);
+
+  --app-success: #2e7d32;
+  --app-warning: #ed6c02;
+}
+
+/* =========================
+   Global
+========================= */
+
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+/* =========================
+   Common Gradient Border
+========================= */
+
+.app-gradient-border {
+  position: relative;
+  border: none !important;
+  border-radius: 16px;
+  background: var(--app-surface-container);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: inherit;
+
+    background: var(--app-primary-gradient);
+
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+
+    mask-composite: exclude;
+
+    pointer-events: none;
+  }
 }
 
 /* =========================

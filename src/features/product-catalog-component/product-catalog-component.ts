@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, output, signal } from '@angular/core';
+import { SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +25,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     MatIconModule,
     MatButtonModule,
     MatTooltip,
+    SlicePipe,
   ],
   templateUrl: './product-catalog-component.html',
   styleUrl: './product-catalog-component.css',

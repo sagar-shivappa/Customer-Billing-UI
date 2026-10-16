@@ -2,4 +2,6 @@
   <button type="button" (click)="menuClicked.emit()">☰</button>
 
   <h2>{{ ownerService.profile().shopName }}</h2>
+
+  <img [src]="supportConfig.logoPath" [alt]="supportConfig.companyName" class="company-logo" />
 </header>

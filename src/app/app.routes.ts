@@ -5,6 +5,7 @@ import { BillingEntryComponent } from '../features/billing-entry-component/billi
 import { OwnerProfileComponent } from '../features/owner-profile-component/owner-profile-component';
 import { CustomerComponent } from '../features/customer/customer';
 import { ReportsComponent } from '../features/reports-component/reports-component';
+import { CustomerCare } from '../features/customer-care/customer-care';
 
 export const routes: Routes = [
   {
@@ -17,9 +18,10 @@ export const routes: Routes = [
         path: 'products',
         component: AddProductComponent,
       },
-      { path: 'owner', component: OwnerProfileComponent },
+      { path: 'company', component: OwnerProfileComponent },
       { path: 'customer', component: CustomerComponent },
       { path: 'reports', component: ReportsComponent },
+      { path: 'support', component: CustomerCare },
     ],
   },
 ];

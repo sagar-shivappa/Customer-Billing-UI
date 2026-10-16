@@ -33,10 +33,20 @@
 </div>
 <div class="products-grid">
   @for (product of filteredProducts(); track product.productCode) {
-    <mat-card class="product-card" role="button" (click)="selectProduct(product)">
+    <mat-card
+      class="product-card app-gradient-border"
+      role="button"
+      (click)="selectProduct(product)"
+    >
       <mat-card-content>
         <div class="product-name">
-          {{ product.productName }}
+          <span class="product-name-text" [matTooltip]="product.productName">
+            {{
+              product.productName.length > 25
+                ? (product.productName | slice: 0 : 25) + '...'
+                : product.productName
+            }}
+          </span>
 
           @if (isProductsRoute()) {
             <button

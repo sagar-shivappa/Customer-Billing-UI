@@ -56,7 +56,6 @@ export class ReportProducts implements OnInit {
     'estimatedProfit',
     'stock',
     'status',
-    'active',
   ];
 
   ngOnInit(): void {

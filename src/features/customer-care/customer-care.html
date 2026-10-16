@@ -1,0 +1,83 @@
+<div class="support-page">
+  <mat-card class="support-card">
+    <div class="support-content">
+      <div class="support-info">
+        <div class="support-header">
+          <mat-icon>support_agent</mat-icon>
+
+          <div>
+            <h1>Software Support</h1>
+            <p>We're here to help you</p>
+          </div>
+        </div>
+
+        <mat-divider />
+
+        <h2>{{ supportConfig.companyName }}</h2>
+
+        <p class="description">
+          For software support, technical assistance, or any queries related to your billing
+          software, please contact us using the details below.
+        </p>
+
+        <div class="contact-list">
+          <div class="contact-item">
+            <mat-icon>person</mat-icon>
+
+            <div class="contact-details">
+              <span class="contact-label">Primary Contact</span>
+
+              <strong>
+                {{ supportConfig.primaryContact.name }}
+              </strong>
+
+              <a [href]="'tel:' + supportConfig.primaryContact.phone">
+                <mat-icon>phone</mat-icon>
+                {{ supportConfig.primaryContact.phone }}
+              </a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <mat-icon>person_outline</mat-icon>
+
+            <div class="contact-details">
+              <span class="contact-label">Secondary Contact</span>
+
+              <strong>
+                {{ supportConfig.secondaryContact.name }}
+              </strong>
+
+              <a [href]="'tel:' + supportConfig.secondaryContact.phone">
+                <mat-icon>phone</mat-icon>
+                {{ supportConfig.secondaryContact.phone }}
+              </a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <mat-icon>email</mat-icon>
+
+            <div class="contact-details">
+              <span class="contact-label">Email Support</span>
+
+              <a [href]="'mailto:' + supportConfig.supportEmail">
+                {{ supportConfig.supportEmail }}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="logo-section">
+        <div class="logo-container">
+          <img [src]="supportConfig.logoPath" [alt]="supportConfig.companyName" />
+        </div>
+
+        <span class="company-name">
+          {{ supportConfig.companyName }}
+        </span>
+      </div>
+    </div>
+  </mat-card>
+</div>

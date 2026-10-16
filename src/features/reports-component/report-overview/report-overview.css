@@ -1,5 +1,6 @@
 .overview-page {
   padding: 24px;
+  color: var(--app-text);
 }
 
 .sales-chart {
@@ -40,7 +41,7 @@
 
   p {
     margin: 6px 0 0;
-    opacity: 0.7;
+    color: var(--app-text-muted);
   }
 }
 
@@ -83,7 +84,7 @@
   height: 48px;
 
   border-radius: 50%;
-  background: var(--mat-sys-surface-container-high);
+  background: var(--app-surface-container-high);
 
   mat-icon {
     font-size: 24px;
@@ -98,7 +99,7 @@
 
 .summary-label {
   font-size: 14px;
-  opacity: 0.7;
+  color: var(--app-text-muted);
 }
 
 .summary-value {
@@ -118,7 +119,7 @@
   align-items: center;
   justify-content: center;
 
-  opacity: 0.6;
+  color: var(--app-text-muted);
 
   mat-icon {
     font-size: 48px;
@@ -145,6 +146,9 @@
 
   padding: 16px;
   margin-bottom: 24px;
+
+  background: color-mix(in srgb, var(--app-error) 8%, transparent);
+  color: var(--app-error);
 }
 
 @media (max-width: 1000px) {

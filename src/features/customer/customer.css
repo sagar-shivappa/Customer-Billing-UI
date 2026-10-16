@@ -3,11 +3,12 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  color: var(--app-text);
 }
 
 /* -----------------------------
-     Page Header
-  ------------------------------ */
+   Page Header
+------------------------------ */
 
 .page-header {
   display: flex;
@@ -23,13 +24,13 @@
 
   p {
     margin: 4px 0 0;
-    color: #666;
+    color: var(--app-text-muted);
   }
 }
 
 /* -----------------------------
-     Messages
-  ------------------------------ */
+   Messages
+------------------------------ */
 
 .message {
   display: flex;
@@ -47,18 +48,18 @@
 }
 
 .message.success {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: color-mix(in srgb, var(--app-success) 12%, transparent);
+  color: var(--app-success);
 }
 
 .message.error {
-  background: #ffebee;
-  color: #c62828;
+  background: color-mix(in srgb, var(--app-error) 12%, transparent);
+  color: var(--app-error);
 }
 
 /* -----------------------------
-     Cards
-  ------------------------------ */
+   Cards
+------------------------------ */
 
 .customer-form-card,
 .search-card,
@@ -85,8 +86,8 @@ mat-card-subtitle {
 }
 
 /* -----------------------------
-     Customer Form
-  ------------------------------ */
+   Customer Form
+------------------------------ */
 
 .customer-form-card form {
   display: grid;
@@ -103,8 +104,8 @@ mat-card-subtitle {
 }
 
 /* -----------------------------
-     Form Actions
-  ------------------------------ */
+   Form Actions
+------------------------------ */
 
 .form-actions {
   grid-column: 1 / -1;
@@ -118,8 +119,8 @@ mat-card-subtitle {
 }
 
 /* -----------------------------
-     Search
-  ------------------------------ */
+   Search
+------------------------------ */
 
 .search-fields {
   display: grid;
@@ -133,8 +134,8 @@ mat-card-subtitle {
 }
 
 /* -----------------------------
-     Customer List
-  ------------------------------ */
+   Customer List
+------------------------------ */
 
 .customer-list {
   display: flex;
@@ -149,7 +150,7 @@ mat-card-subtitle {
   gap: 20px;
 
   padding: 16px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--app-outline-variant);
   border-radius: 10px;
 
   transition:
@@ -158,13 +159,13 @@ mat-card-subtitle {
 }
 
 .customer-item:hover {
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--app-text) 8%, transparent);
   transform: translateY(-1px);
 }
 
 /* -----------------------------
-     Customer Information
-  ------------------------------ */
+   Customer Information
+------------------------------ */
 
 .customer-name {
   font-size: 17px;
@@ -174,7 +175,7 @@ mat-card-subtitle {
 
 .customer-code {
   font-size: 13px;
-  color: #666;
+  color: var(--app-text-muted);
   margin-bottom: 10px;
 }
 
@@ -182,7 +183,7 @@ mat-card-subtitle {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  color: #555;
+  color: var(--app-text-muted);
   font-size: 14px;
 }
 
@@ -199,8 +200,8 @@ mat-card-subtitle {
 }
 
 /* -----------------------------
-     Status
-  ------------------------------ */
+   Status
+------------------------------ */
 
 .customer-status {
   min-width: 70px;
@@ -219,18 +220,18 @@ mat-card-subtitle {
 }
 
 .status.active {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: color-mix(in srgb, var(--app-success) 12%, transparent);
+  color: var(--app-success);
 }
 
 .status.inactive {
-  background: #eeeeee;
-  color: #616161;
+  background: var(--app-surface-container-high);
+  color: var(--app-text-muted);
 }
 
 /* -----------------------------
-     Customer Actions
-  ------------------------------ */
+   Customer Actions
+------------------------------ */
 
 .customer-actions {
   display: flex;
@@ -239,8 +240,8 @@ mat-card-subtitle {
 }
 
 /* -----------------------------
-     Loading
-  ------------------------------ */
+   Loading
+------------------------------ */
 
 .loading {
   min-height: 160px;
@@ -252,12 +253,12 @@ mat-card-subtitle {
 
   gap: 12px;
 
-  color: #666;
+  color: var(--app-text-muted);
 }
 
 /* -----------------------------
-     Empty State
-  ------------------------------ */
+   Empty State
+------------------------------ */
 
 .empty-state {
   min-height: 180px;
@@ -268,7 +269,7 @@ mat-card-subtitle {
   align-items: center;
 
   text-align: center;
-  color: #777;
+  color: var(--app-text-muted);
 }
 
 .empty-state mat-icon {
@@ -289,8 +290,8 @@ mat-card-subtitle {
 }
 
 /* -----------------------------
-     Responsive
-  ------------------------------ */
+   Responsive
+------------------------------ */
 
 @media (max-width: 900px) {
   .customer-form-card form {

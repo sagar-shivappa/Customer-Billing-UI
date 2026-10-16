@@ -2,16 +2,67 @@ header {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 20px;
+
   height: 64px;
-  background: #1976d2;
-  color: white;
+  padding: 0 20px;
+  box-sizing: border-box;
+
+  background: var(--app-primary-gradient);
+  color: var(--app-on-primary);
+
+  flex-shrink: 0;
 }
 
 button {
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  padding: 0;
   border: none;
+  border-radius: 50%;
+
+  cursor: pointer;
+
   background: transparent;
-  color: white;
+  color: var(--app-on-primary);
+
   font-size: 24px;
+
+  transition:
+    background-color 150ms ease,
+    transform 150ms ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--app-on-primary);
+    outline-offset: 2px;
+  }
+}
+
+h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.company-logo {
+  margin-left: auto;
+
+  height: 42px;
+  width: auto;
+  max-width: 140px;
+
+  border-radius: 50%;
+  object-fit: contain;
 }
