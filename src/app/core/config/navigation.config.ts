@@ -14,7 +14,7 @@ export const NAVIGATION_ITEMS: MenuItem[] = [
 
   {
     label: 'Reports',
-    icon: 'analytics',
+    icon: 'bar_chart',
     route: '/reports',
   },
   {
