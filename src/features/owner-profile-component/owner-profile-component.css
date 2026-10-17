@@ -11,3 +11,34 @@
 mat-card {
   background: var(--app-surface);
 }
+
+.settings-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.stock-management,
+.gst-management {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stock-management p {
+  margin: 0;
+  color: var(--app-text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gst-management mat-form-field {
+  width: 180px;
+}
+
+@media (max-width: 768px) {
+  .settings-row {
+    grid-template-columns: 1fr;
+  }
+}

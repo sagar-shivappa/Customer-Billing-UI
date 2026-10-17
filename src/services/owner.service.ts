@@ -15,6 +15,8 @@ export class OwnerProfileService {
     gstin: '',
     productCategories: [],
     stockManagement: false,
+    includeGst: false,
+    gstPercentage: 0,
   });
   http = inject(HttpClient);
 

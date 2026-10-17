@@ -18,7 +18,23 @@ export class ReceiptFormatterService {
     const owner = this.ownerProfileService.profile();
     const layout = RECEIPT_LAYOUTS[receiptWidth];
 
-    // Reset printer
+    // =========================
+    // BILL TOTALS
+    // =========================
+    // GST and totals are already calculated and persisted
+    // by the backend when the bill was created.
+
+    const subtotal = bill.subtotal;
+    const gstPercentage = bill.gstPercentage;
+    const sgstAmount = bill.sgstAmount;
+    const cgstAmount = bill.cgstAmount;
+    const roundOff = bill.roundOff;
+    const grandTotal = bill.grandTotal;
+
+    // =========================
+    // RESET PRINTER
+    // =========================
+
     data.push('\x1B\x40');
 
     // =========================
@@ -76,13 +92,38 @@ export class ReceiptFormatterService {
     data.push(this.separator(layout));
 
     // =========================
-    // TOTAL
+    // TOTALS
+    // =========================
+
+    data.push('\x1B\x61\x00');
+
+    data.push(this.formatTotalRow('Subtotal', subtotal, layout));
+
+    // GST values come directly from the persisted bill.
+    if (gstPercentage > 0) {
+      const halfGstPercentage = gstPercentage / 2;
+
+      data.push(this.formatTotalRow(`SGST @ ${halfGstPercentage}%`, sgstAmount, layout));
+
+      data.push(this.formatTotalRow(`CGST @ ${halfGstPercentage}%`, cgstAmount, layout));
+    }
+
+    // Show round-off only when there is an actual difference.
+    if (Math.abs(roundOff) >= 0.01) {
+      data.push(this.formatTotalRow('Round Off', roundOff, layout));
+    }
+
+    data.push(this.separator(layout));
+
+    // =========================
+    // GRAND TOTAL
     // =========================
 
     data.push('\x1B\x61\x02');
+
     data.push('\x1B\x45\x01');
 
-    data.push(`TOTAL: Rs.${bill.grandTotal.toFixed(2)}\n`);
+    data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
 
     data.push('\x1B\x45\x00');
 
@@ -107,6 +148,15 @@ export class ReceiptFormatterService {
     data.push('\n\n\n');
 
     return data;
+  }
+
+  private formatTotalRow(label: string, amount: number, layout: ReceiptLayout): string {
+    const sign = amount < 0 ? '-' : '';
+    const amountText = `Rs.${sign}${Math.abs(amount).toFixed(2)}`;
+
+    const labelWidth = layout.columns - amountText.length;
+
+    return this.padRight(this.truncate(label, labelWidth), labelWidth) + amountText + '\n';
   }
 
   private formatItemHeader(layout: ReceiptLayout): string {

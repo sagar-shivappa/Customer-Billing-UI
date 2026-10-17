@@ -393,10 +393,44 @@
           showFirstLastButtons
         />
 
-        <div class="details-total">
-          <span> Grand Total </span>
+        <div class="details-totals">
+          <!-- Subtotal -->
+          <div class="total-row">
+            <span>Subtotal</span>
 
-          <strong> ₹{{ transaction.grandTotal | number: '1.2-2' }} </strong>
+            <span> ₹{{ transaction.subtotal | number: '1.2-2' }} </span>
+          </div>
+
+          <!-- GST -->
+          @if (transaction.gstPercentage > 0) {
+            <div class="total-row">
+              <span>SGST @ {{ transaction.gstPercentage / 2 }}%</span>
+
+              <span> ₹{{ transaction.sgstAmount | number: '1.2-2' }} </span>
+            </div>
+
+            <div class="total-row">
+              <span>CGST @ {{ transaction.gstPercentage / 2 }}%</span>
+
+              <span> ₹{{ transaction.cgstAmount | number: '1.2-2' }} </span>
+            </div>
+          }
+
+          <!-- Round Off -->
+          @if (transaction.roundOff !== 0) {
+            <div class="total-row">
+              <span>Round Off</span>
+
+              <span> ₹{{ transaction.roundOff | number: '1.2-2' }} </span>
+            </div>
+          }
+
+          <!-- Grand Total -->
+          <div class="total-row grand-total">
+            <span>Grand Total</span>
+
+            <strong> ₹{{ transaction.grandTotal | number: '1.2-2' }} </strong>
+          </div>
         </div>
 
         <div class="details-actions">

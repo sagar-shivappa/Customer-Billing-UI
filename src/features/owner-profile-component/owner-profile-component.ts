@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OwnerProfileService } from '../../services/owner.service';
 import { MatLabel, MatFormField } from '@angular/material/form-field';
@@ -26,7 +26,7 @@ import { PrinterSettingsComponent } from '../printer/printer-settings.component'
   templateUrl: './owner-profile-component.html',
   styleUrl: './owner-profile-component.css',
 })
-export class OwnerProfileComponent {
+export class OwnerProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly ownerProfileService = inject(OwnerProfileService);
 
@@ -35,14 +35,42 @@ export class OwnerProfileComponent {
     address: ['', Validators.required],
     pinCode: ['', Validators.required],
     gstin: [''],
+
     stockManagement: [false, Validators.required],
+
+    includeGst: [false],
+
+    gstPercentage: [{ value: 0, disabled: true }, [Validators.min(0), Validators.max(100)]],
   });
+
   ngOnInit(): void {
     this.profileForm.patchValue({
       ...this.ownerProfileService.profile(),
     });
 
+    this.updateGstControlState(this.profileForm.controls.includeGst.value);
+
+    this.profileForm.controls.includeGst.valueChanges.subscribe((includeGst) => {
+      this.updateGstControlState(includeGst);
+    });
+
     this.profileForm.markAsPristine();
+  }
+
+  private updateGstControlState(includeGst: boolean): void {
+    const gstControl = this.profileForm.controls.gstPercentage;
+
+    if (includeGst) {
+      gstControl.enable();
+
+      gstControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+    } else {
+      gstControl.disable();
+      gstControl.clearValidators();
+      gstControl.setValue(0);
+    }
+
+    gstControl.updateValueAndValidity();
   }
 
   save(): void {

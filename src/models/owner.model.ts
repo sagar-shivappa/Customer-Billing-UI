@@ -7,6 +7,8 @@ export interface OwnerProfile {
   gstin: string;
   productCategories?: string[];
   stockManagement: boolean;
+  includeGst: boolean;
+  gstPercentage: number;
   __v?: number;
 }
 

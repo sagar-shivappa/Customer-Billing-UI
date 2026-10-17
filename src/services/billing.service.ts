@@ -1,10 +1,13 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { ProductService } from './product.service';
-import { OrderSummary, OrderSummaryItem, Item } from '../models/bill.model';
 import { HttpClient } from '@angular/common/http';
-import { app_config } from '../app/core/config/app.config';
 import { Observable } from 'rxjs';
+
+import { ProductService } from './product.service';
 import { CustomerService } from './customer.service';
+
+import { OrderSummary, OrderSummaryItem, Item } from '../models/bill.model';
+
+import { app_config } from '../app/core/config/app.config';
 
 export type PaymentType = 'Cash' | 'UPI' | 'Credit';
 
@@ -18,15 +21,26 @@ export interface BillingItem {
 
 export interface Billing {
   _id: string;
+
   billNumber: string;
-  customerId: string;
-  customerName: string;
-  items: BillingItem[];
-  grandTotal: number;
-  paymentType: PaymentType;
   saleDate: string;
-  createdAt?: string;
-  updatedAt?: string;
+
+  items: BillingItem[];
+
+  customerId?: string;
+  customerName?: string;
+
+  paymentType: PaymentType;
+
+  subtotal: number;
+
+  gstPercentage: number;
+  sgstAmount: number;
+  cgstAmount: number;
+
+  roundOff: number;
+
+  grandTotal: number;
 }
 
 export interface BillingResponse {
@@ -42,6 +56,7 @@ export class BillingService {
   private readonly productService = inject(ProductService);
   private readonly customerService = inject(CustomerService);
   private readonly http = inject(HttpClient);
+
   private readonly _orderedItems = signal<Item[]>([]);
 
   readonly orderedItems = this._orderedItems.asReadonly();
@@ -56,14 +71,13 @@ export class BillingService {
 
   readonly orderSummary = computed<OrderSummary>(() => {
     const products = this.productService.products();
-
     const items = this.orderedItems();
 
     const summaryItems: OrderSummaryItem[] = [];
 
     let totalAmount = 0;
 
-    const productMap = new Map(products.map((p) => [p.productCode, p]));
+    const productMap = new Map(products.map((product) => [product.productCode, product]));
 
     for (const item of items) {
       const product = productMap.get(item.productCode);
@@ -72,14 +86,15 @@ export class BillingService {
         continue;
       }
 
-      const itemTotal = product.sellingPrice * (item.quantity ?? 1);
+      const quantity = item.quantity ?? 1;
+      const itemTotal = product.sellingPrice * quantity;
 
       totalAmount += itemTotal;
 
       summaryItems.push({
         productCode: product.productCode,
         productName: product.productName,
-        quantity: item.quantity ?? 1,
+        quantity,
         unitPrice: product.sellingPrice,
         totalPrice: itemTotal,
       });
@@ -123,7 +138,8 @@ export class BillingService {
     );
   }
 
-  //Blocking in function, as we dont want user's to edit the product price while generating bill
+  // Blocking this function because users should not
+  // edit the product price while generating a bill.
   // updateUnitPrice(productCode: string, unitPrice: number): void {
   //   this._orderedItems.update((items) =>
   //     items.map((item) =>
@@ -135,14 +151,13 @@ export class BillingService {
   //         : item,
   //     ),
   //   );
-  //   console.log(this._orderedItems());
   // }
 
   clearOrder(): void {
     this._orderedItems.set([]);
   }
 
-  removeItem(productCode: string) {
+  removeItem(productCode: string): void {
     this._orderedItems.update((items) => items.filter((item) => item.productCode !== productCode));
   }
 
@@ -161,7 +176,7 @@ export class BillingService {
     },
     payment: {
       customerId: string;
-      paymentType: string;
+      paymentType: PaymentType;
     },
   ) {
     return {
