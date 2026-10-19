@@ -1,0 +1,15 @@
+meta {
+  name: Get All Bills - By customer code
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/billing?customerId=6360959764
+  body: none
+  auth: none
+}
+
+query {
+  customerId: 6360959764
+}
