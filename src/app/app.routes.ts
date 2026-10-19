@@ -6,22 +6,25 @@ import { OwnerProfileComponent } from '../features/owner-profile-component/owner
 import { CustomerComponent } from '../features/customer/customer';
 import { ReportsComponent } from '../features/reports-component/reports-component';
 import { CustomerCare } from '../features/customer-care/customer-care';
+import { licenseGuard } from '../guards/license.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: Home,
     children: [
-      { path: '', component: BillingEntryComponent },
+      { path: '', component: BillingEntryComponent, canActivate: [licenseGuard] },
 
       {
         path: 'products',
         component: AddProductComponent,
+        canActivate: [licenseGuard],
       },
-      { path: 'company', component: OwnerProfileComponent },
-      { path: 'customer', component: CustomerComponent },
-      { path: 'reports', component: ReportsComponent },
+      { path: 'company', component: OwnerProfileComponent, canActivate: [licenseGuard] },
+      { path: 'customer', component: CustomerComponent, canActivate: [licenseGuard] },
+      { path: 'reports', component: ReportsComponent, canActivate: [licenseGuard] },
       { path: 'support', component: CustomerCare },
+      { path: '**', redirectTo: 'support' },
     ],
   },
 ];

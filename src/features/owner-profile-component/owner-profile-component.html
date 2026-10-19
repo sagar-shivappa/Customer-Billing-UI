@@ -1,6 +1,14 @@
 <mat-card class="app-gradient-border">
-  <mat-card-header>
+  <mat-card-header class="content-header">
     <mat-card-title>Company Profile</mat-card-title>
+
+    <div class="license-status">
+      @if (currentExpiryDate) {
+        <div class="expiry-date">Expires: {{ currentExpiryDate }}</div>
+      } @else {
+        <span class="not-activated"> Not Activated </span>
+      }
+    </div>
   </mat-card-header>
 
   <hr />

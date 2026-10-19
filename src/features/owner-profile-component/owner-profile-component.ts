@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PrinterSettingsComponent } from '../printer/printer-settings.component';
+import { SoftwareLicenseService } from '../../services/software-license.service';
 
 @Component({
   selector: 'app-owner-profile-component',
@@ -29,6 +30,10 @@ import { PrinterSettingsComponent } from '../printer/printer-settings.component'
 export class OwnerProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly ownerProfileService = inject(OwnerProfileService);
+  private readonly licenseService = inject(SoftwareLicenseService);
+
+  currentExpiryDate = '';
+  daysRemaining = 0;
 
   readonly profileForm = this.fb.nonNullable.group({
     shopName: ['', Validators.required],
@@ -50,11 +55,20 @@ export class OwnerProfileComponent implements OnInit {
 
     this.updateGstControlState(this.profileForm.controls.includeGst.value);
 
+    this.loadLicenseStatus();
+
     this.profileForm.controls.includeGst.valueChanges.subscribe((includeGst) => {
       this.updateGstControlState(includeGst);
     });
 
     this.profileForm.markAsPristine();
+  }
+
+  private loadLicenseStatus(): void {
+    const status = this.licenseService.getLicenseStatus();
+
+    this.currentExpiryDate = status.formattedExpiryDate;
+    this.daysRemaining = status.daysRemaining;
   }
 
   private updateGstControlState(includeGst: boolean): void {

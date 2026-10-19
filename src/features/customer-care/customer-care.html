@@ -1,83 +1,215 @@
 <div class="support-page">
-  <mat-card class="support-card">
-    <div class="support-content">
-      <div class="support-info">
-        <div class="support-header">
-          <mat-icon>support_agent</mat-icon>
+  <div class="support-layout">
+    <!-- =========================
+         Support Card
+    ========================== -->
 
-          <div>
-            <h1>Software Support</h1>
-            <p>We're here to help you</p>
+    <mat-card class="support-card">
+      <div class="support-content">
+        <div class="support-info">
+          <div class="support-header">
+            <mat-icon>support_agent</mat-icon>
+
+            <div>
+              <h1>Software Support</h1>
+              <p>We're here to help you</p>
+            </div>
+          </div>
+
+          <mat-divider />
+
+          <h2>{{ supportConfig.companyName }}</h2>
+
+          <p class="description">
+            For software support, technical assistance, or any queries related to your billing
+            software, please contact us using the details below.
+          </p>
+
+          <div class="contact-list">
+            <div class="contact-item">
+              <mat-icon>person</mat-icon>
+
+              <div class="contact-details">
+                <span class="contact-label">Primary Contact</span>
+
+                <strong>
+                  {{ supportConfig.primaryContact.name }}
+                </strong>
+
+                <a [href]="'tel:' + supportConfig.primaryContact.phone">
+                  <mat-icon>phone</mat-icon>
+                  {{ supportConfig.primaryContact.phone }}
+                </a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <mat-icon>person_outline</mat-icon>
+
+              <div class="contact-details">
+                <span class="contact-label">Secondary Contact</span>
+
+                <strong>
+                  {{ supportConfig.secondaryContact.name }}
+                </strong>
+
+                <a [href]="'tel:' + supportConfig.secondaryContact.phone">
+                  <mat-icon>phone</mat-icon>
+                  {{ supportConfig.secondaryContact.phone }}
+                </a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <mat-icon>email</mat-icon>
+
+              <div class="contact-details">
+                <span class="contact-label">Email Support</span>
+
+                <a [href]="'mailto:' + supportConfig.supportEmail">
+                  {{ supportConfig.supportEmail }}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
-        <mat-divider />
-
-        <h2>{{ supportConfig.companyName }}</h2>
-
-        <p class="description">
-          For software support, technical assistance, or any queries related to your billing
-          software, please contact us using the details below.
-        </p>
-
-        <div class="contact-list">
-          <div class="contact-item">
-            <mat-icon>person</mat-icon>
-
-            <div class="contact-details">
-              <span class="contact-label">Primary Contact</span>
-
-              <strong>
-                {{ supportConfig.primaryContact.name }}
-              </strong>
-
-              <a [href]="'tel:' + supportConfig.primaryContact.phone">
-                <mat-icon>phone</mat-icon>
-                {{ supportConfig.primaryContact.phone }}
-              </a>
-            </div>
+        <div class="logo-section">
+          <div class="logo-container">
+            <img [src]="supportConfig.logoPath" [alt]="supportConfig.companyName" />
           </div>
 
-          <div class="contact-item">
-            <mat-icon>person_outline</mat-icon>
-
-            <div class="contact-details">
-              <span class="contact-label">Secondary Contact</span>
-
-              <strong>
-                {{ supportConfig.secondaryContact.name }}
-              </strong>
-
-              <a [href]="'tel:' + supportConfig.secondaryContact.phone">
-                <mat-icon>phone</mat-icon>
-                {{ supportConfig.secondaryContact.phone }}
-              </a>
-            </div>
-          </div>
-
-          <div class="contact-item">
-            <mat-icon>email</mat-icon>
-
-            <div class="contact-details">
-              <span class="contact-label">Email Support</span>
-
-              <a [href]="'mailto:' + supportConfig.supportEmail">
-                {{ supportConfig.supportEmail }}
-              </a>
-            </div>
-          </div>
+          <span class="company-name">
+            {{ supportConfig.companyName }}
+          </span>
         </div>
       </div>
+    </mat-card>
 
-      <div class="logo-section">
-        <div class="logo-container">
-          <img [src]="supportConfig.logoPath" [alt]="supportConfig.companyName" />
-        </div>
+    <!-- =========================
+         License Card
+    ========================== -->
 
-        <span class="company-name">
-          {{ supportConfig.companyName }}
-        </span>
+    <mat-card class="license-card">
+      <div class="content-header">
+        @if (currentExpiryDate) {
+          <div class="expiry-date">Expires: {{ currentExpiryDate }}</div>
+
+          <div class="days-remaining">
+            {{ daysRemaining }}
+            {{ daysRemaining === 1 ? 'day' : 'days' }} left
+          </div>
+        } @else {
+          <div class="not-activated">Not Activated</div>
+        }
       </div>
-    </div>
-  </mat-card>
+      <mat-card-content>
+        <form [formGroup]="licenseForm">
+          <!-- Agent Code -->
+
+          <mat-form-field appearance="outline">
+            <mat-label>Agent Code</mat-label>
+
+            <input
+              matInput
+              type="password"
+              formControlName="agentCode"
+              placeholder="Enter agent code"
+              autocomplete="off"
+              (blur)="validateAgentCode()"
+              (keydown.enter)="validateAgentCode()"
+            />
+
+            @if (
+              licenseForm.controls.agentCode.touched &&
+              licenseForm.controls.agentCode.hasError('required')
+            ) {
+              <mat-error> Agent code is required </mat-error>
+            }
+
+            @if (agentCodeValid) {
+              <mat-icon matSuffix> check_circle </mat-icon>
+            }
+          </mat-form-field>
+
+          <!-- Error -->
+
+          @if (errorMessage) {
+            <div class="license-message error">
+              <mat-icon>error</mat-icon>
+              <span>{{ errorMessage }}</span>
+            </div>
+          }
+
+          @if (agentCodeValid) {
+            <!-- License Duration -->
+
+            <mat-form-field appearance="outline">
+              <mat-label>License Duration</mat-label>
+
+              <mat-select formControlName="duration" (selectionChange)="calculateExpiry()">
+                @for (license of licenseDurations; track license.value) {
+                  <mat-option [value]="license.value">
+                    {{ license.label }}
+                  </mat-option>
+                }
+              </mat-select>
+
+              @if (
+                licenseForm.controls.duration.touched &&
+                licenseForm.controls.duration.hasError('required')
+              ) {
+                <mat-error> Please select a license duration </mat-error>
+              }
+            </mat-form-field>
+
+            <!-- New Expiry Preview -->
+
+            @if (newExpiryDate) {
+              <div class="license-info">
+                <div>
+                  <span>Current Expiry</span>
+
+                  <strong>
+                    {{ currentExpiryDate || 'Not activated' }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>New Expiry</span>
+
+                  <strong>
+                    {{ newExpiryDate }}
+                  </strong>
+                </div>
+              </div>
+            }
+
+            <!-- Activate -->
+
+            <div class="license-actions">
+              <button
+                matButton="filled"
+                type="button"
+                [disabled]="!licenseForm.controls.duration.value"
+                (click)="activateLicense()"
+              >
+                <mat-icon>verified</mat-icon>
+                Activate License
+              </button>
+            </div>
+          }
+
+          <!-- Success -->
+
+          @if (successMessage) {
+            <div class="license-message success">
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ successMessage }}</span>
+            </div>
+          }
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

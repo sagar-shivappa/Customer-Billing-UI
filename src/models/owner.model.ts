@@ -9,6 +9,7 @@ export interface OwnerProfile {
   stockManagement: boolean;
   includeGst: boolean;
   gstPercentage: number;
+  softwareExpiryDate?: string;
   __v?: number;
 }
 

@@ -4,10 +4,16 @@ import { app_config } from '../app/core/config/app.config';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface ProductResponse {
+export interface ProductListResponse {
   success: boolean;
   message: string;
   data: Product[];
+}
+
+export interface ProductResponse {
+  success: boolean;
+  message: string;
+  data: Product;
 }
 
 @Injectable({
@@ -20,9 +26,9 @@ export class ProductService {
   readonly products = this._products.asReadonly();
 
   add(product: Product): void {
-    this.http.post(`${app_config.API_BASE_URL}/api/products`, product).subscribe({
-      next: () => {
-        this._products.update((products) => [...products, product]);
+    this.http.post<ProductResponse>(`${app_config.API_BASE_URL}/api/products`, product).subscribe({
+      next: (response: ProductResponse) => {
+        this._products.update((products) => [...products, response.data]);
       },
       error: (error) => {
         // Don't modify products signal
@@ -47,7 +53,7 @@ export class ProductService {
   }
 
   getAll(): void {
-    this.http.get<ProductResponse>(`${app_config.API_BASE_URL}/api/products`).subscribe({
+    this.http.get<ProductListResponse>(`${app_config.API_BASE_URL}/api/products`).subscribe({
       next: (response) => {
         this._products.set([...response.data]);
       },
