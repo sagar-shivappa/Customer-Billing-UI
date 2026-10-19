@@ -1,6 +1,6 @@
 {
   "name": "customer-billing-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "electron:build": "ng build",
+    "electron:build": "ng build && electron-builder",
     "electron:start": "electron ."
   },
   "private": true,
