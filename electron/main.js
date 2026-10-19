@@ -1,18 +1,26 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const http = require('http');
 
 let backendProcess;
 
-const backendPath = path.join(__dirname, '..', 'backend');
+const backendPath = app.isPackaged
+  ? path.join(process.resourcesPath, 'backend')
+  : path.join(__dirname, '..', 'backend');
 
 function startBackend() {
   return new Promise((resolve, reject) => {
-    backendProcess = spawn(process.env.ComSpec, ['/c', 'npm', 'run', 'start:prod'], {
-      cwd: backendPath,
-      windowsHide: true,
-    });
+    const nodeExecutable = process.platform === 'win32' ? 'node.exe' : 'node';
+
+    backendProcess = spawn(
+      nodeExecutable,
+      [path.join(backendPath, 'src', 'server.js'), '--production'],
+      {
+        cwd: backendPath,
+        windowsHide: true,
+      },
+    );
 
     backendProcess.stdout.on('data', (data) => {
       console.log(`[Backend] ${data}`);
@@ -64,8 +72,19 @@ function waitForBackend(retries = 30) {
 }
 
 function stopBackend() {
-  if (backendProcess && !backendProcess.killed) {
-    backendProcess.kill();
+  if (!backendProcess || backendProcess.killed) {
+    return;
+  }
+
+  try {
+    if (process.platform === 'win32') {
+      execSync(`taskkill /pid ${backendProcess.pid} /T /F`);
+    } else {
+      backendProcess.kill();
+    }
+  } catch (error) {
+    console.error('Failed to stop backend:', error);
+  } finally {
     backendProcess = null;
   }
 }

@@ -35,6 +35,7 @@
     "@angular/compiler-cli": "^21.2.0",
     "angular-cli-ghpages": "^3.1.0",
     "electron": "^44.9.0",
+    "electron-builder": "^26.15.3",
     "http-server": "^14.1.1",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
@@ -43,5 +44,48 @@
   },
   "browser": {
     "path": false
+  },
+  "build": {
+    "appId": "com.customerbilling.app",
+    "productName": "Customer Billing",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/customer-billing-ui/browser/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/src",
+        "to": "backend/src"
+      },
+      {
+        "from": "backend/package.json",
+        "to": "backend/package.json"
+      },
+      {
+        "from": "backend/package-lock.json",
+        "to": "backend/package-lock.json"
+      },
+      {
+        "from": "backend/.env.production",
+        "to": "backend/.env.production"
+      },
+      {
+        "from": "backend/node_modules",
+        "to": "backend/node_modules"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }
