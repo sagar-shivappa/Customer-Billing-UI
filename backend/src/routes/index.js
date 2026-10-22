@@ -1,15 +1,17 @@
-const router = require("express").Router();
+const router = require('express').Router();
 
-router.use("/products", require("../modules/products/product.routes"));
+router.use('/products', require('../modules/products/product.routes'));
 
-router.use("/billing", require("../modules/billing/billing.routes"));
+router.use('/billing', require('../modules/billing/billing.routes'));
 
-router.use("/owner", require("../modules/owner/owner.routes"));
+router.use('/owner', require('../modules/owner/owner.routes'));
 
-router.use("/customers", require("../modules/customers/customer.routes"));
+router.use('/customers', require('../modules/customers/customer.routes'));
 
-router.use("/reports", require("../modules/reports/reports.routes"));
+router.use('/reports', require('../modules/reports/reports.routes'));
 
-router.use("/qz", require("./qz.routes"));
+router.use('/qz', require('./qz.routes'));
+
+router.use('/backup', require('../backup/backup.routes'));
 
 module.exports = router;
