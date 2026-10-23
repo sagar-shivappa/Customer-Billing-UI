@@ -20,7 +20,7 @@ export const routes: Routes = [
         component: AddProductComponent,
         canActivate: [licenseGuard],
       },
-      { path: 'company', component: OwnerProfileComponent, canActivate: [licenseGuard] },
+      { path: 'company', component: OwnerProfileComponent },
       { path: 'customer', component: CustomerComponent, canActivate: [licenseGuard] },
       { path: 'reports', component: ReportsComponent, canActivate: [licenseGuard] },
       { path: 'support', component: CustomerCare },

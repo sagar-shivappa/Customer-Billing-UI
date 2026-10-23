@@ -20,7 +20,6 @@
           <input
             #productCodeInput
             matInput
-            [readonly]="formType === 'update'"
             formControlName="productCode"
             (keydown.enter)="focusPurchasePrice()"
           />
