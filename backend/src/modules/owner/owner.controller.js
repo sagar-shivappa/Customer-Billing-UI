@@ -1,4 +1,4 @@
-const ownerService = require("./owner.service");
+const ownerService = require('./owner.service');
 
 /**
  * Create Bill
@@ -10,7 +10,7 @@ const addOwner = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: "Owner created successfully.",
+      message: 'Owner created successfully.',
       data: owner,
     });
   } catch (error) {
@@ -28,7 +28,7 @@ const updateOwner = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: "Owner updated successfully.",
+      message: 'Owner updated successfully.',
       data: owner,
     });
   } catch (error) {
@@ -50,8 +50,27 @@ const getOwner = async (req, res, next) => {
   }
 };
 
+/**
+ * Authorize Owner
+ * POST /api/owner/authorize
+ */
+const authorizeOwner = async (req, res, next) => {
+  try {
+    const result = await ownerService.authorizeOwner(req.body);
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+      authorized: result.authorized,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   addOwner,
   getOwner,
   updateOwner,
+  authorizeOwner,
 };

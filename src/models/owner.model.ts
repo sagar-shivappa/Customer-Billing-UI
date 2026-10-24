@@ -11,7 +11,7 @@ export interface OwnerProfile {
   gstPercentage: number;
   softwareExpiryDate?: string;
   flexiblePricing: boolean;
-  __v?: number;
+  passwordConfigured?: boolean;
 }
 
 export interface OwnerProfileResponse {

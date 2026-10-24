@@ -1,0 +1,83 @@
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="authorize()">
+    <mat-form-field appearance="outline">
+      <mat-label>
+        {{ passwordConfigured ? 'Password' : 'Create Password' }}
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="password"
+        [type]="hidePassword ? 'password' : 'text'"
+        autocomplete="off"
+      />
+
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="hidePassword = !hidePassword"
+        [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+      >
+        <mat-icon>
+          {{ hidePassword ? 'visibility' : 'visibility_off' }}
+        </mat-icon>
+      </button>
+
+      @if (form.controls.password.hasError('required')) {
+        <mat-error>Password is required.</mat-error>
+      }
+
+      @if (form.controls.password.hasError('minlength')) {
+        <mat-error>Password must be at least 4 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    @if (!passwordConfigured) {
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm Password</mat-label>
+
+        <input
+          matInput
+          formControlName="confirmPassword"
+          [type]="hideConfirmPassword ? 'password' : 'text'"
+          autocomplete="off"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hideConfirmPassword = !hideConfirmPassword"
+          [attr.aria-label]="hideConfirmPassword ? 'Show password' : 'Hide password'"
+        >
+          <mat-icon>
+            {{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}
+          </mat-icon>
+        </button>
+
+        @if (form.controls.confirmPassword.hasError('required')) {
+          <mat-error>Confirm password is required.</mat-error>
+        }
+
+        @if (form.controls.confirmPassword.hasError('minlength')) {
+          <mat-error>Password must be at least 4 characters.</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton type="button" (click)="cancel()">Cancel</button>
+
+  <button matButton="filled" type="button" (click)="authorize()" [disabled]="!form.valid">
+    {{ passwordConfigured ? 'Login' : 'Set Password' }}
+  </button>
+</mat-dialog-actions>

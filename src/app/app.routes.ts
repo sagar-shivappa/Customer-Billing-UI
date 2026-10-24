@@ -7,6 +7,7 @@ import { CustomerComponent } from '../features/customer/customer';
 import { ReportsComponent } from '../features/reports-component/reports-component';
 import { CustomerCare } from '../features/customer-care/customer-care';
 import { licenseGuard } from '../guards/license.guard';
+import { ownerAuthGuard } from '../guards/owner-auth.guard';
 
 export const routes: Routes = [
   {
@@ -22,7 +23,7 @@ export const routes: Routes = [
       },
       { path: 'company', component: OwnerProfileComponent },
       { path: 'customer', component: CustomerComponent, canActivate: [licenseGuard] },
-      { path: 'reports', component: ReportsComponent, canActivate: [licenseGuard] },
+      { path: 'reports', component: ReportsComponent, canActivate: [licenseGuard, ownerAuthGuard] },
       { path: 'support', component: CustomerCare },
       { path: '**', redirectTo: 'support' },
     ],

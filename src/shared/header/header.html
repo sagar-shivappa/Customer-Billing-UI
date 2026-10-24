@@ -3,5 +3,12 @@
 
   <h2>{{ ownerService.profile().shopName }}</h2>
 
-  <img [src]="supportConfig.logoPath" [alt]="supportConfig.companyName" class="company-logo" />
+  <button
+    type="button"
+    class="company-logo-button"
+    (click)="toggleOwnerAuthorization()"
+    [attr.aria-label]="authorizationService.authorized() ? 'Lock owner mode' : 'Owner access'"
+  >
+    <img [src]="supportConfig.logoPath" [alt]="supportConfig.companyName" class="company-logo" />
+  </button>
 </header>

@@ -53,6 +53,11 @@ const ownerSchema = new mongoose.Schema({
     default: false,
   },
 
+  passwordHash: {
+    type: String,
+    default: '',
+  },
+
   // Software license expiry date.
   // Stored as YYYY-MM-DD because this is a date-only value.
   softwareExpiryDate: {

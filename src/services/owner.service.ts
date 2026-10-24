@@ -19,6 +19,7 @@ export class OwnerProfileService {
     gstPercentage: 0,
     softwareExpiryDate: '',
     flexiblePricing: false,
+    passwordConfigured: false,
   });
   http = inject(HttpClient);
 
@@ -94,5 +95,12 @@ export class OwnerProfileService {
           });
         },
       });
+  }
+
+  updatePasswordConfigured(configured: boolean): void {
+    this._profile.update((profile) => ({
+      ...profile,
+      passwordConfigured: configured,
+    }));
   }
 }

@@ -1,0 +1,18 @@
+mat-dialog-content {
+  min-width: 320px;
+  padding-top: 8px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.error-message {
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--app-surface-container-high);
+  color: var(--app-error, --app-error);
+  font-size: 13px;
+}
