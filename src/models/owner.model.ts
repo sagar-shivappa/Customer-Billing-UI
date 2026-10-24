@@ -10,6 +10,7 @@ export interface OwnerProfile {
   includeGst: boolean;
   gstPercentage: number;
   softwareExpiryDate?: string;
+  flexiblePricing: boolean;
   __v?: number;
 }
 

@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
-import { app_config } from '../../app/core/config/app.config';
+import { OwnerProfileService } from '../../services/owner.service';
 import { MatSelect, MatOption } from '@angular/material/select';
 import { FormBuilder, ReactiveFormsModule, ɵInternalFormsSharedModule } from '@angular/forms';
 import { CustomerService } from '../../services/customer.service';
@@ -33,6 +33,7 @@ import { PrinterService } from '../../services/printer/printer.service';
 })
 export class BillPanel {
   private readonly billingService = inject(BillingService);
+  private readonly ownerProfileService = inject(OwnerProfileService);
   private readonly fb = inject(FormBuilder);
   protected readonly customerService = inject(CustomerService);
   private readonly router = inject(Router);
@@ -42,7 +43,6 @@ export class BillPanel {
 
   readonly orderSummary = this.billingService.orderSummary;
   paymentTypes: string[] = ['Cash', 'UPI', 'Credit'];
-  allowPriceEdit = app_config.editable_price;
 
   readonly customerForm = this.fb.group({
     customerId: this.fb.control<string>(''),
@@ -58,6 +58,10 @@ export class BillPanel {
   ];
 
   createdBill = signal<Billing | null>(null);
+
+  priceAdjustmentEnabled = signal(false);
+
+  readonly flexiblePricing = this.ownerProfileService.profile;
 
   constructor() {
     this.customerForm
@@ -77,6 +81,15 @@ export class BillPanel {
   //     console.error('Print failed:', error);
   //   }
   // }
+
+  togglePriceAdjustment(): void {
+    if (!this.flexiblePricing().flexiblePricing) {
+      this.priceAdjustmentEnabled.set(false);
+      return;
+    }
+
+    this.priceAdjustmentEnabled.update((enabled) => !enabled);
+  }
 
   private lookupCustomer(phone: string): void {
     const value = phone?.trim();
@@ -114,10 +127,15 @@ export class BillPanel {
     this.billingService.updateQuantity(productCode, quantity);
   }
 
-  // updatePrice(productCode: string, event: Event): void {
-  //   const price = Number((event.target as HTMLInputElement).value);
-  //   this.billingService.updateUnitPrice(productCode, price);
-  // }
+  updatePrice(productCode: string, event: Event): void {
+    const price = Number((event.target as HTMLInputElement).value);
+
+    if (!Number.isFinite(price) || price < 0) {
+      return;
+    }
+
+    this.billingService.updateUnitPrice(productCode, price);
+  }
 
   removeItem(productCode: string): void {
     this.billingService.removeItem(productCode);

@@ -75,24 +75,61 @@
             <input matInput formControlName="gstin" placeholder="Optional" autocomplete="off" />
           </mat-form-field>
         </div>
-
+        <hr />
         <!-- Owner Settings -->
         <div class="settings-row">
           <!-- Stock Management -->
-          <div class="stock-management">
-            <mat-slide-toggle formControlName="stockManagement">
-              Enable Stock Management
-            </mat-slide-toggle>
+          <div class="setting-card">
+            <div class="setting-header">
+              <mat-slide-toggle formControlName="stockManagement">
+                Stock Management
+              </mat-slide-toggle>
 
-            <p>
-              When enabled, product stock will be checked and automatically reduced when a bill is
-              created.
-            </p>
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="When enabled, product stock will be checked and automatically reduced when a bill is created."
+                aria-label="Stock Management information"
+              >
+                <mat-icon>info_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Flexible Pricing -->
+          <div class="setting-card">
+            <div class="setting-header">
+              <mat-slide-toggle formControlName="flexiblePricing">
+                Flexible Pricing
+              </mat-slide-toggle>
+
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="When enabled, the selling price can be adjusted for a bill without changing the product's master selling price."
+                aria-label="Flexible Pricing information"
+              >
+                <mat-icon>info_outline</mat-icon>
+              </button>
+            </div>
           </div>
 
           <!-- GST Settings -->
-          <div class="gst-management">
-            <mat-slide-toggle formControlName="includeGst"> Include GST in bills </mat-slide-toggle>
+          <div class="setting-card">
+            <div class="setting-header">
+              <mat-slide-toggle formControlName="includeGst">
+                Include GST in Bills
+              </mat-slide-toggle>
+
+              <button
+                mat-icon-button
+                type="button"
+                matTooltip="When enabled, GST will be calculated and included in the bill total."
+                aria-label="GST information"
+              >
+                <mat-icon>info_outline</mat-icon>
+              </button>
+            </div>
 
             @if (profileForm.controls.includeGst.value) {
               <mat-form-field appearance="outline">
@@ -117,7 +154,7 @@
                   profileForm.controls.gstPercentage.hasError('min') ||
                   profileForm.controls.gstPercentage.hasError('max')
                 ) {
-                  <mat-error> GST percentage must be between 0 and 100. </mat-error>
+                  <mat-error>GST percentage must be between 0 and 100.</mat-error>
                 }
               </mat-form-field>
             }

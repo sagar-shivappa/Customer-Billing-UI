@@ -8,6 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PrinterSettingsComponent } from '../printer/printer-settings.component';
 import { SoftwareLicenseService } from '../../services/software-license.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-owner-profile-component',
@@ -23,6 +25,8 @@ import { SoftwareLicenseService } from '../../services/software-license.service'
     MatButtonModule,
     MatSlideToggleModule,
     PrinterSettingsComponent,
+    MatTooltipModule,
+    MatIcon,
   ],
   templateUrl: './owner-profile-component.html',
   styleUrl: './owner-profile-component.css',
@@ -40,9 +44,8 @@ export class OwnerProfileComponent implements OnInit {
     address: ['', Validators.required],
     pinCode: ['', Validators.required],
     gstin: [''],
-
     stockManagement: [false, Validators.required],
-
+    flexiblePricing: [false],
     includeGst: [false],
 
     gstPercentage: [{ value: 0, disabled: true }, [Validators.min(0), Validators.max(100)]],

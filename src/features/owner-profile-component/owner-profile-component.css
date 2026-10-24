@@ -14,9 +14,27 @@ mat-card {
 
 .settings-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.setting-card {
+  min-width: 0;
+}
+
+.setting-header {
+  display: flex;
+  align-items: center;
+}
+
+.setting-header button {
+  flex-shrink: 0;
+}
+
+.setting-card mat-form-field {
+  width: 100%;
+  margin-top: 8px;
 }
 
 .stock-management,
@@ -35,6 +53,10 @@ mat-card {
 
 .gst-management mat-form-field {
   width: 180px;
+}
+
+.button-row {
+  margin-top: 15px;
 }
 
 @media (max-width: 768px) {

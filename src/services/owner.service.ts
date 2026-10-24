@@ -18,6 +18,7 @@ export class OwnerProfileService {
     includeGst: false,
     gstPercentage: 0,
     softwareExpiryDate: '',
+    flexiblePricing: false,
   });
   http = inject(HttpClient);
 

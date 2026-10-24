@@ -48,6 +48,10 @@ const ownerSchema = new mongoose.Schema({
     min: 0,
     max: 100,
   },
+  flexiblePricing: {
+    type: Boolean,
+    default: false,
+  },
 
   // Software license expiry date.
   // Stored as YYYY-MM-DD because this is a date-only value.

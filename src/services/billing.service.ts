@@ -87,7 +87,8 @@ export class BillingService {
       }
 
       const quantity = item.quantity ?? 1;
-      const itemTotal = product.sellingPrice * quantity;
+      const unitPrice = item.unitPrice ?? product.sellingPrice;
+      const itemTotal = unitPrice * quantity;
 
       totalAmount += itemTotal;
 
@@ -95,7 +96,7 @@ export class BillingService {
         productCode: product.productCode,
         productName: product.productName,
         quantity,
-        unitPrice: product.sellingPrice,
+        unitPrice,
         totalPrice: itemTotal,
       });
     }
@@ -138,20 +139,18 @@ export class BillingService {
     );
   }
 
-  // Blocking this function because users should not
-  // edit the product price while generating a bill.
-  // updateUnitPrice(productCode: string, unitPrice: number): void {
-  //   this._orderedItems.update((items) =>
-  //     items.map((item) =>
-  //       item.productCode === productCode
-  //         ? {
-  //             ...item,
-  //             unitPrice: Math.max(0, unitPrice),
-  //           }
-  //         : item,
-  //     ),
-  //   );
-  // }
+  updateUnitPrice(productCode: string, unitPrice: number): void {
+    this._orderedItems.update((items) =>
+      items.map((item) =>
+        item.productCode === productCode
+          ? {
+              ...item,
+              unitPrice: Math.max(0, unitPrice),
+            }
+          : item,
+      ),
+    );
+  }
 
   clearOrder(): void {
     this._orderedItems.set([]);
@@ -172,6 +171,7 @@ export class BillingService {
       items: {
         productCode: string;
         quantity: number;
+        unitPrice: number;
       }[];
     },
     payment: {
@@ -183,6 +183,7 @@ export class BillingService {
       items: order.items.map((item) => ({
         productCode: item.productCode,
         quantity: item.quantity,
+        unitPrice: item.unitPrice,
       })),
       paymentType: payment.paymentType,
       customerId: payment.customerId,

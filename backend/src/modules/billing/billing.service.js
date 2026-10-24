@@ -1,6 +1,6 @@
-const Billing = require("./billing.model");
-const Product = require("../products/product.model");
-const Owner = require("../owner/owner.model");
+const Billing = require('./billing.model');
+const Product = require('../products/product.model');
+const Owner = require('../owner/owner.model');
 
 /**
  * Round money to 2 decimal places
@@ -16,12 +16,12 @@ const generateBillNumber = () => {
   const now = new Date();
 
   const year = String(now.getFullYear()).slice(-2);
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
 
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
 
   return `${year}${month}${day}${hours}${minutes}${seconds}`;
 };
@@ -33,18 +33,18 @@ const createBill = async (billData) => {
   const { items, paymentType, customerId, customerName } = billData;
 
   if (!items || items.length === 0) {
-    throw new Error("Bill should contain at least one product.");
+    throw new Error('Bill should contain at least one product.');
   }
 
   /**
    * Get shop configuration
    */
   const owner = await Owner.findOne({
-    profileKey: "OWNER",
-  }).select("stockManagement includeGst gstPercentage");
+    profileKey: 'OWNER',
+  }).select('stockManagement includeGst gstPercentage flexiblePricing');
 
   if (!owner) {
-    throw new Error("Owner profile not found.");
+    throw new Error('Owner profile not found.');
   }
 
   const stockManagement = owner.stockManagement;
@@ -68,7 +68,7 @@ const createBill = async (billData) => {
       const quantity = Number(item.quantity);
 
       if (!Number.isFinite(quantity) || quantity <= 0) {
-        throw new Error("Quantity must be greater than zero.");
+        throw new Error('Quantity must be greater than zero.');
       }
 
       let product;
@@ -113,12 +113,10 @@ const createBill = async (billData) => {
           productId: product._id,
           quantity,
         });
-      }
-
-      /**
-       * Stock Management DISABLED
-       */
-      else {
+      } else {
+        /**
+         * Stock Management DISABLED
+         */
         product = await Product.findOne({
           productCode: item.productCode,
         });
@@ -128,13 +126,27 @@ const createBill = async (billData) => {
         }
       }
 
-      const totalPrice = roundMoney(product.sellingPrice * quantity);
+      const productSellingPrice = Number(product.sellingPrice);
+
+      let unitPrice = productSellingPrice;
+
+      if (owner.flexiblePricing === true && item.unitPrice !== undefined) {
+        const requestedPrice = Number(item.unitPrice);
+
+        if (!Number.isFinite(requestedPrice) || requestedPrice < 0) {
+          throw new Error(`Invalid price for ${product.productName}.`);
+        }
+
+        unitPrice = requestedPrice;
+      }
+
+      const totalPrice = roundMoney(unitPrice * quantity);
 
       billItems.push({
         productCode: product.productCode,
         productName: product.productName,
         quantity,
-        unitPrice: product.sellingPrice,
+        unitPrice,
         totalPrice,
       });
 
@@ -153,13 +165,9 @@ const createBill = async (billData) => {
 
     const halfGstPercentage = gstPercentage / 2;
 
-    const sgstAmount = includeGst
-      ? roundMoney((subtotal * halfGstPercentage) / 100)
-      : 0;
+    const sgstAmount = includeGst ? roundMoney((subtotal * halfGstPercentage) / 100) : 0;
 
-    const cgstAmount = includeGst
-      ? roundMoney((subtotal * halfGstPercentage) / 100)
-      : 0;
+    const cgstAmount = includeGst ? roundMoney((subtotal * halfGstPercentage) / 100) : 0;
 
     // Amount before final round-off
     const calculatedGrandTotal = roundMoney(subtotal + sgstAmount + cgstAmount);
@@ -229,7 +237,7 @@ const getBillById = async (id) => {
   const bill = await Billing.findById(id);
 
   if (!bill) {
-    throw new Error("Bill not found.");
+    throw new Error('Bill not found.');
   }
 
   return bill;
@@ -258,12 +266,10 @@ const getBills = async (filters) => {
       $gte: new Date(`${date}T00:00:00.000Z`),
       $lte: new Date(`${date}T23:59:59.999Z`),
     };
-  }
-
-  /**
-   * Date Range Filter
-   */
-  else if (from || to) {
+  } else if (from || to) {
+    /**
+     * Date Range Filter
+     */
     query.saleDate = {};
 
     if (from) {
@@ -273,17 +279,13 @@ const getBills = async (filters) => {
     if (to) {
       query.saleDate.$lte = new Date(`${to}T23:59:59.999Z`);
     }
-  }
+  } else if (month) {
+    /**
+     * Month Filter
+     */
+    const [year, monthNumber] = month.split('-');
 
-  /**
-   * Month Filter
-   */
-  else if (month) {
-    const [year, monthNumber] = month.split("-");
-
-    const startDate = new Date(
-      Date.UTC(Number(year), Number(monthNumber) - 1, 1),
-    );
+    const startDate = new Date(Date.UTC(Number(year), Number(monthNumber) - 1, 1));
 
     const endDate = new Date(Date.UTC(Number(year), Number(monthNumber), 1));
 
@@ -325,18 +327,18 @@ const getBills = async (filters) => {
 };
 
 const updatePaymentType = async (billId, paymentType) => {
-  if (!["Cash", "UPI"].includes(paymentType)) {
-    throw new Error("Credit bill can only be settled with Cash or UPI");
+  if (!['Cash', 'UPI'].includes(paymentType)) {
+    throw new Error('Credit bill can only be settled with Cash or UPI');
   }
 
   const bill = await Billing.findById(billId);
 
   if (!bill) {
-    throw new Error("Bill not found");
+    throw new Error('Bill not found');
   }
 
-  if (bill.paymentType !== "Credit") {
-    throw new Error("Only credit bills can be marked as paid");
+  if (bill.paymentType !== 'Credit') {
+    throw new Error('Only credit bills can be marked as paid');
   }
 
   bill.paymentType = paymentType;
