@@ -432,6 +432,19 @@
             <strong> ₹{{ transaction.grandTotal | number: '1.2-2' }} </strong>
           </div>
         </div>
+        @if (transaction.paymentClearedAt || transaction.paymentType === 'Credit') {
+          <div class="payment-cleared-info">
+            <span class="payment-cleared-label">Payment Cleared</span>
+
+            @if (transaction.paymentClearedAt) {
+              <strong class="payment-cleared-value cleared">
+                {{ transaction.paymentClearedAt | date: 'dd MMM yyyy, hh:mm a' }}
+              </strong>
+            } @else {
+              <strong class="payment-cleared-value pending"> Not yet cleared </strong>
+            }
+          </div>
+        }
 
         <div class="details-actions">
           <button matButton="filled" type="button" (click)="printTransaction(transaction)">

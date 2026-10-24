@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Billing } from '../billing.service';
+import { Billing } from '../../models/bill.model';
 import qz from 'qz-tray';
 
 import { ReceiptFormatterService } from './receipt-formatter.service';

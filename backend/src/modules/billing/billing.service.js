@@ -342,6 +342,7 @@ const updatePaymentType = async (billId, paymentType) => {
   }
 
   bill.paymentType = paymentType;
+  bill.paymentClearedAt = new Date();
 
   return await bill.save();
 };

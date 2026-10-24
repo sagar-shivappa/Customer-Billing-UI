@@ -16,7 +16,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ReportsService, TransactionFilters } from '../../../services/report.service';
 import { finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog';
-import { Billing, BillingService } from '../../../services/billing.service';
+import { BillingService } from '../../../services/billing.service';
+import { Billing } from '../../../models/bill.model';
 import { PrinterService } from '../../../services/printer/printer.service';
 
 type DateFilter = 'today' | 'week' | 'month' | 'custom';
@@ -333,17 +334,10 @@ export class ReportTransactions {
         .updatePaymentType(transaction._id, paymentType)
         .pipe(finalize(() => this.loading.set(false)))
         .subscribe({
-          next: () => {
+          next: (updatedBill) => {
             // Update the transaction locally
             this.transactions.update((transactions) =>
-              transactions.map((item) =>
-                item._id === transaction._id
-                  ? {
-                      ...item,
-                      paymentType,
-                    }
-                  : item,
-              ),
+              transactions.map((item) => (item._id === transaction._id ? updatedBill : item)),
             );
 
             // Remove pending change
@@ -355,14 +349,7 @@ export class ReportTransactions {
 
             // Update currently opened transaction, if any
             if (this.selectedTransaction()?._id === transaction._id) {
-              this.selectedTransaction.update((item) =>
-                item
-                  ? {
-                      ...item,
-                      paymentType,
-                    }
-                  : null,
-              );
+              this.selectedTransaction.set(updatedBill);
             }
           },
 

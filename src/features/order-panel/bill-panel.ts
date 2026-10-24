@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { Billing, BillingService, PaymentType } from '../../services/billing.service';
+import { BillingService } from '../../services/billing.service';
+import { Billing, PaymentType } from '../../models/bill.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';

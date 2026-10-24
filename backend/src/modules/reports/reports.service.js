@@ -1,8 +1,8 @@
-const Billing = require("../billing/billing.model");
-const Product = require("../products/product.model");
+const Billing = require('../billing/billing.model');
+const Product = require('../products/product.model');
 
 // Escape special characters in user-provided search text.
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const parseDate = (value, endOfDay = false) => {
   if (!value) return null;
@@ -27,14 +27,7 @@ const parseDate = (value, endOfDay = false) => {
 };
 
 const getProductsReport = async (filters = {}) => {
-  const {
-    from,
-    to,
-    category,
-    search,
-    sortBy = "revenue",
-    sortOrder = "desc",
-  } = filters;
+  const { from, to, category, search, sortBy = 'revenue', sortOrder = 'desc' } = filters;
 
   const startDate = parseDate(from);
   const endDate = parseDate(to, true);
@@ -44,20 +37,20 @@ const getProductsReport = async (filters = {}) => {
   }
 
   const allowedSortFields = {
-    revenue: "totalRevenue",
-    quantitySold: "totalQuantitySold",
-    stock: "stock",
-    estimatedProfit: "estimatedProfit",
-    productName: "productName",
+    revenue: 'totalRevenue',
+    quantitySold: 'totalQuantitySold',
+    stock: 'stock',
+    estimatedProfit: 'estimatedProfit',
+    productName: 'productName',
   };
 
   if (!allowedSortFields[sortBy]) {
-    throw new Error("Invalid sortBy value.");
+    throw new Error('Invalid sortBy value.');
   }
 
   const direction = sortOrder.toLowerCase();
 
-  if (!["asc", "desc"].includes(direction)) {
+  if (!['asc', 'desc'].includes(direction)) {
     throw new Error("sortOrder must be 'asc' or 'desc'.");
   }
 
@@ -68,12 +61,9 @@ const getProductsReport = async (filters = {}) => {
   }
 
   if (search?.trim()) {
-    const searchRegex = new RegExp(escapeRegex(search.trim()), "i");
+    const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
 
-    productMatch.$or = [
-      { productName: searchRegex },
-      { productCode: searchRegex },
-    ];
+    productMatch.$or = [{ productName: searchRegex }, { productCode: searchRegex }];
   }
 
   // Only sales metrics are date-filtered.
@@ -96,12 +86,12 @@ const getProductsReport = async (filters = {}) => {
   const salesPipeline = [
     ...(Object.keys(salesDateMatch).length ? [{ $match: salesDateMatch }] : []),
 
-    { $unwind: "$items" },
+    { $unwind: '$items' },
 
     {
       $match: {
         $expr: {
-          $eq: ["$items.productCode", "$$productCode"],
+          $eq: ['$items.productCode', '$$productCode'],
         },
       },
     },
@@ -110,10 +100,10 @@ const getProductsReport = async (filters = {}) => {
       $group: {
         _id: null,
         totalQuantitySold: {
-          $sum: "$items.quantity",
+          $sum: '$items.quantity',
         },
         totalRevenue: {
-          $sum: "$items.totalPrice",
+          $sum: '$items.totalPrice',
         },
       },
     },
@@ -125,19 +115,19 @@ const getProductsReport = async (filters = {}) => {
     {
       $lookup: {
         from: Billing.collection.name,
-        let: { productCode: "$productCode" },
+        let: { productCode: '$productCode' },
         pipeline: salesPipeline,
-        as: "sales",
+        as: 'sales',
       },
     },
 
     {
       $addFields: {
         totalQuantitySold: {
-          $ifNull: [{ $arrayElemAt: ["$sales.totalQuantitySold", 0] }, 0],
+          $ifNull: [{ $arrayElemAt: ['$sales.totalQuantitySold', 0] }, 0],
         },
         totalRevenue: {
-          $ifNull: [{ $arrayElemAt: ["$sales.totalRevenue", 0] }, 0],
+          $ifNull: [{ $arrayElemAt: ['$sales.totalRevenue', 0] }, 0],
         },
       },
     },
@@ -146,9 +136,9 @@ const getProductsReport = async (filters = {}) => {
       $addFields: {
         estimatedProfit: {
           $subtract: [
-            "$totalRevenue",
+            '$totalRevenue',
             {
-              $multiply: ["$purchasePrice", "$totalQuantitySold"],
+              $multiply: ['$purchasePrice', '$totalQuantitySold'],
             },
           ],
         },
@@ -157,15 +147,15 @@ const getProductsReport = async (filters = {}) => {
           $switch: {
             branches: [
               {
-                case: { $lte: ["$stock", 0] },
-                then: "Out of stock",
+                case: { $lte: ['$stock', 0] },
+                then: 'Out of stock',
               },
               {
-                case: { $lte: ["$stock", 10] },
-                then: "Low stock",
+                case: { $lte: ['$stock', 10] },
+                then: 'Low stock',
               },
             ],
-            default: "In stock",
+            default: 'In stock',
           },
         },
       },
@@ -173,7 +163,7 @@ const getProductsReport = async (filters = {}) => {
 
     {
       $sort: {
-        [allowedSortFields[sortBy]]: direction === "asc" ? 1 : -1,
+        [allowedSortFields[sortBy]]: direction === 'asc' ? 1 : -1,
         _id: 1,
       },
     },
@@ -203,11 +193,11 @@ const getProductsReport = async (filters = {}) => {
       result.totalRevenue += product.totalRevenue;
       result.estimatedProfit += product.estimatedProfit;
 
-      if (product.stockStatus === "Low stock") {
+      if (product.stockStatus === 'Low stock') {
         result.lowStockCount++;
       }
 
-      if (product.stockStatus === "Out of stock") {
+      if (product.stockStatus === 'Out of stock') {
         result.outOfStockCount++;
       }
 
@@ -261,11 +251,9 @@ const buildDateQuery = ({ date, from, to, month }) => {
   }
 
   if (month) {
-    const [year, monthNumber] = month.split("-");
+    const [year, monthNumber] = month.split('-');
 
-    const startDate = new Date(
-      Date.UTC(Number(year), Number(monthNumber) - 1, 1),
-    );
+    const startDate = new Date(Date.UTC(Number(year), Number(monthNumber) - 1, 1));
 
     const endDate = new Date(Date.UTC(Number(year), Number(monthNumber), 1));
 
@@ -308,7 +296,7 @@ const getOverviewSummary = async (filters) => {
               _id: null,
 
               totalSales: {
-                $sum: "$grandTotal",
+                $sum: '$grandTotal',
               },
 
               transactionCount: {
@@ -316,7 +304,7 @@ const getOverviewSummary = async (filters) => {
               },
 
               customerIds: {
-                $addToSet: "$customerId",
+                $addToSet: '$customerId',
               },
             },
           },
@@ -332,18 +320,18 @@ const getOverviewSummary = async (filters) => {
               customerCount: {
                 $size: {
                   $filter: {
-                    input: "$customerIds",
+                    input: '$customerIds',
 
-                    as: "customer",
+                    as: 'customer',
 
                     cond: {
                       $and: [
                         {
-                          $ne: ["$$customer", null],
+                          $ne: ['$$customer', null],
                         },
 
                         {
-                          $ne: ["$$customer", ""],
+                          $ne: ['$$customer', ''],
                         },
                       ],
                     },
@@ -354,13 +342,13 @@ const getOverviewSummary = async (filters) => {
               averageBill: {
                 $cond: [
                   {
-                    $eq: ["$transactionCount", 0],
+                    $eq: ['$transactionCount', 0],
                   },
 
                   0,
 
                   {
-                    $divide: ["$totalSales", "$transactionCount"],
+                    $divide: ['$totalSales', '$transactionCount'],
                   },
                 ],
               },
@@ -379,14 +367,14 @@ const getOverviewSummary = async (filters) => {
             $group: {
               _id: {
                 $dateToString: {
-                  format: "%Y-%m-%d",
-                  date: "$saleDate",
-                  timezone: "Asia/Kolkata",
+                  format: '%Y-%m-%d',
+                  date: '$saleDate',
+                  timezone: 'Asia/Kolkata',
                 },
               },
 
               sales: {
-                $sum: "$grandTotal",
+                $sum: '$grandTotal',
               },
             },
           },
@@ -395,7 +383,7 @@ const getOverviewSummary = async (filters) => {
             $project: {
               _id: 0,
 
-              date: "$_id",
+              date: '$_id',
 
               sales: 1,
             },
@@ -411,9 +399,9 @@ const getOverviewSummary = async (filters) => {
         paymentBreakdown: [
           {
             $group: {
-              _id: "$paymentType",
+              _id: '$paymentType',
               amount: {
-                $sum: "$grandTotal",
+                $sum: '$grandTotal',
               },
               transactionCount: {
                 $sum: 1,
@@ -424,7 +412,7 @@ const getOverviewSummary = async (filters) => {
           {
             $project: {
               _id: 0,
-              paymentType: "$_id",
+              paymentType: '$_id',
               amount: 1,
               transactionCount: 1,
             },
@@ -480,10 +468,7 @@ const getTransactions = async (filters) => {
 
   const page = Math.max(Number.parseInt(filters.page, 10) || 1, 1);
 
-  const limit = Math.min(
-    Math.max(Number.parseInt(filters.limit, 10) || 10, 1),
-    100,
-  );
+  const limit = Math.min(Math.max(Number.parseInt(filters.limit, 10) || 10, 1), 100);
 
   const skip = (page - 1) * limit;
 
@@ -502,7 +487,7 @@ const getTransactions = async (filters) => {
   // Payment type filter
   // -----------------------------------------
 
-  if (paymentType && paymentType !== "all") {
+  if (paymentType && paymentType !== 'all') {
     query.paymentType = paymentType;
   }
 
@@ -523,19 +508,19 @@ const getTransactions = async (filters) => {
 
     {
       $lookup: {
-        from: "customers",
+        from: 'customers',
 
-        localField: "customerId",
+        localField: 'customerId',
 
-        foreignField: "phone",
+        foreignField: 'phone',
 
-        as: "customer",
+        as: 'customer',
       },
     },
 
     {
       $unwind: {
-        path: "$customer",
+        path: '$customer',
 
         preserveNullAndEmptyArrays: true,
       },
@@ -550,7 +535,7 @@ const getTransactions = async (filters) => {
   // -----------------------------------------
 
   if (search && search.trim()) {
-    const searchRegex = new RegExp(search.trim(), "i");
+    const searchRegex = new RegExp(search.trim(), 'i');
 
     pipeline.push({
       $match: {
@@ -564,15 +549,15 @@ const getTransactions = async (filters) => {
           },
 
           {
-            "customer.name": searchRegex,
+            'customer.name': searchRegex,
           },
 
           {
-            "items.productCode": searchRegex,
+            'items.productCode': searchRegex,
           },
 
           {
-            "items.productName": searchRegex,
+            'items.productName': searchRegex,
           },
         ],
       },
@@ -614,7 +599,7 @@ const getTransactions = async (filters) => {
 
             // Customer name comes from Customer
             customerName: {
-              $ifNull: ["$customer.name", ""],
+              $ifNull: ['$customer.name', ''],
             },
 
             items: 1,
@@ -626,7 +611,7 @@ const getTransactions = async (filters) => {
             cgstAmount: 1,
             roundOff: 1,
             grandTotal: 1,
-
+            paymentClearedAt: 1,
             paymentType: 1,
 
             saleDate: 1,
@@ -640,7 +625,7 @@ const getTransactions = async (filters) => {
 
       pagination: [
         {
-          $count: "totalRecords",
+          $count: 'totalRecords',
         },
       ],
 
@@ -654,7 +639,7 @@ const getTransactions = async (filters) => {
             _id: null,
 
             totalSales: {
-              $sum: "$grandTotal",
+              $sum: '$grandTotal',
             },
 
             transactionCount: {
@@ -662,7 +647,7 @@ const getTransactions = async (filters) => {
             },
 
             customerIds: {
-              $addToSet: "$customerId",
+              $addToSet: '$customerId',
             },
           },
         },
@@ -678,18 +663,18 @@ const getTransactions = async (filters) => {
             customerCount: {
               $size: {
                 $filter: {
-                  input: "$customerIds",
+                  input: '$customerIds',
 
-                  as: "customer",
+                  as: 'customer',
 
                   cond: {
                     $and: [
                       {
-                        $ne: ["$$customer", null],
+                        $ne: ['$$customer', null],
                       },
 
                       {
-                        $ne: ["$$customer", ""],
+                        $ne: ['$$customer', ''],
                       },
                     ],
                   },
@@ -700,13 +685,13 @@ const getTransactions = async (filters) => {
             averageBill: {
               $cond: [
                 {
-                  $eq: ["$transactionCount", 0],
+                  $eq: ['$transactionCount', 0],
                 },
 
                 0,
 
                 {
-                  $divide: ["$totalSales", "$transactionCount"],
+                  $divide: ['$totalSales', '$transactionCount'],
                 },
               ],
             },

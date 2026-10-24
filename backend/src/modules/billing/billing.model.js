@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const ItemSchema = new mongoose.Schema(
   {
     productCode: {
@@ -99,8 +99,13 @@ const billingSchema = new mongoose.Schema(
 
     paymentType: {
       type: String,
-      enum: ["Cash", "Credit", "UPI"],
-      default: "Cash",
+      enum: ['Cash', 'Credit', 'UPI'],
+      default: 'Cash',
+    },
+
+    paymentClearedAt: {
+      type: Date,
+      default: null,
     },
 
     saleDate: {
@@ -113,4 +118,4 @@ const billingSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model("Billing", billingSchema);
+module.exports = mongoose.model('Billing', billingSchema);

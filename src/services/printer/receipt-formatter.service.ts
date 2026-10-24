@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 
-import { Billing, BillingItem } from '../billing.service';
+import { Billing, BillingItem } from '../../models/bill.model';
 import { OwnerProfileService } from '../owner.service';
 
 import { RECEIPT_LAYOUTS } from './receipt-layout';
