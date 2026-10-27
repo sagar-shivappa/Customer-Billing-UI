@@ -168,8 +168,11 @@ export class ReceiptFormatterService {
 
     data.push('Thank You Visit Again\n');
 
+    // Center marker at the very end of the bill.
+    data.push('!!!!!!!!!!!!!!!!\n');
+
     // Blank space after the receipt.
-    // Let the printer/driver handle the cut.
+    // Printer handles the automatic cut.
     data.push('\n\n\n');
 
     return data;

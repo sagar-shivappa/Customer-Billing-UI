@@ -1,6 +1,6 @@
 {
   "name": "customer-billing-ui",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
