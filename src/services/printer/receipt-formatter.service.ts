@@ -81,6 +81,7 @@ export class ReceiptFormatterService {
 
     data.push(`Bill No : ${bill.billNumber}\n`);
     data.push(`Date    : ${this.formatDate(bill.saleDate)}\n`);
+
     if (bill.customerName) {
       data.push(`Customer: ${bill.customerName}\n`);
     }
@@ -155,6 +156,7 @@ export class ReceiptFormatterService {
 
       data.push('\x1B\x45\x00'); // Bold OFF
     }
+
     data.push(this.separator(layout));
 
     // =========================
@@ -175,31 +177,76 @@ export class ReceiptFormatterService {
 
   private formatTotalRow(label: string, amount: number, layout: ReceiptLayout): string {
     const sign = amount < 0 ? '-' : '';
-    const amountText = `Rs.${sign}${Math.abs(amount).toFixed(2)}`;
+
+    const amountText = `Rs.${sign}${this.formatAmount(Math.abs(amount))}`;
 
     const labelWidth = layout.columns - amountText.length;
 
     return this.padRight(this.truncate(label, labelWidth), labelWidth) + amountText + '\n';
   }
 
+  // =========================
+  // ITEM HEADER
+  // =========================
+
   private formatItemHeader(layout: ReceiptLayout): string {
     return (
       this.padRight('Item', layout.itemNameWidth) +
-      this.padLeft('Qty', layout.quantityWidth) +
-      this.padLeft('Amount', layout.amountWidth) +
+      this.center('Qty', layout.quantityWidth) +
+      this.center('Price', layout.priceWidth) +
+      this.center('Amount', layout.amountWidth) +
       '\n'
     );
   }
 
+  // =========================
+  // ITEM ROW
+  // =========================
+
   private formatItem(item: BillingItem, layout: ReceiptLayout): string[] {
     const name = this.truncate(item.productName, layout.itemNameWidth);
 
-    const quantity = this.padLeft(String(item.quantity), layout.quantityWidth);
+    const quantity = this.center(String(item.quantity), layout.quantityWidth);
 
-    const amount = this.padLeft(item.totalPrice.toFixed(2), layout.amountWidth);
+    const price = this.center(this.formatAmount(item.unitPrice), layout.priceWidth);
 
-    return [`${this.padRight(name, layout.itemNameWidth)}${quantity}${amount}\n`];
+    const amount = this.center(this.formatAmount(item.totalPrice), layout.amountWidth);
+
+    return [`${this.padRight(name, layout.itemNameWidth)}${quantity}${price}${amount}\n`];
   }
+
+  // =========================
+  // NUMBER FORMATTING
+  // =========================
+
+  private formatAmount(value: number): string {
+    if (Number.isInteger(value)) {
+      return String(value);
+    }
+
+    return value.toFixed(2);
+  }
+
+  // =========================
+  // CENTER ALIGNMENT
+  // =========================
+
+  private center(value: string, width: number): string {
+    if (value.length >= width) {
+      return this.truncate(value, width);
+    }
+
+    const totalPadding = width - value.length;
+
+    const leftPadding = Math.floor(totalPadding / 2);
+    const rightPadding = totalPadding - leftPadding;
+
+    return ' '.repeat(leftPadding) + value + ' '.repeat(rightPadding);
+  }
+
+  // =========================
+  // RECEIPT HELPERS
+  // =========================
 
   private separator(layout: ReceiptLayout): string {
     return `${'-'.repeat(layout.columns)}\n`;
@@ -220,6 +267,10 @@ export class ReceiptFormatterService {
 
     return `${value.substring(0, length - 1)}.`;
   }
+
+  // =========================
+  // DATE FORMATTING
+  // =========================
 
   private formatDate(date: string): string {
     const value = new Date(date);

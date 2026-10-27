@@ -4,6 +4,7 @@ export interface ReceiptLayout {
   columns: number;
   itemNameWidth: number;
   quantityWidth: number;
+  priceWidth: number;
   amountWidth: number;
 }
 

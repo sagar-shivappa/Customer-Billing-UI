@@ -3,22 +3,25 @@ import { ReceiptLayout, ReceiptWidth } from './printer.types';
 export const RECEIPT_LAYOUTS: Record<ReceiptWidth, ReceiptLayout> = {
   '58mm': {
     columns: 32,
-    itemNameWidth: 18,
+    itemNameWidth: 13,
     quantityWidth: 4,
-    amountWidth: 10,
+    priceWidth: 9,
+    amountWidth: 6,
   },
 
   '80mm': {
     columns: 48,
-    itemNameWidth: 28,
-    quantityWidth: 6,
-    amountWidth: 14,
+    itemNameWidth: 23,
+    quantityWidth: 5,
+    priceWidth: 10,
+    amountWidth: 10,
   },
 
   '4inch': {
     columns: 64,
-    itemNameWidth: 40,
-    quantityWidth: 8,
-    amountWidth: 16,
+    itemNameWidth: 34,
+    quantityWidth: 7,
+    priceWidth: 11,
+    amountWidth: 12,
   },
 };
