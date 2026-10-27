@@ -18,11 +18,11 @@ export class ReceiptFormatterService {
     const owner = this.ownerProfileService.profile();
     const layout = RECEIPT_LAYOUTS[receiptWidth];
 
+    const is80mm = receiptWidth === '80mm';
+
     // =========================
     // BILL TOTALS
     // =========================
-    // GST and totals are already calculated and persisted
-    // by the backend when the bill was created.
 
     const subtotal = bill.subtotal;
     const gstPercentage = bill.gstPercentage;
@@ -43,20 +43,28 @@ export class ReceiptFormatterService {
 
     data.push('\x1B\x61\x01');
 
-    data.push('\x1B\x45\x01');
-
     if (owner?.shopName) {
-      data.push(`${owner.shopName}\n`);
+      if (is80mm) {
+        // 80mm: larger + bold company name
+        data.push('\x1B\x45\x01'); // Bold ON
+        data.push('\x1D\x21\x11'); // Double width + double height
+        data.push(`${owner.shopName}\n`);
+        data.push('\x1D\x21\x00'); // Normal size
+        data.push('\x1B\x45\x00'); // Bold OFF
+      } else {
+        // 58mm: existing bold company name
+        data.push('\x1B\x45\x01');
+        data.push(`${owner.shopName}\n`);
+        data.push('\x1B\x45\x00');
+      }
     }
-
-    data.push('\x1B\x45\x00');
 
     if (owner?.address) {
       data.push(`${owner.address}\n`);
     }
 
     if (owner?.pinCode) {
-      data.push(`PIN: ${owner.pinCode}\n`);
+      data.push(`${owner.pinCode}\n`);
     }
 
     if (owner?.gstin) {
@@ -73,7 +81,9 @@ export class ReceiptFormatterService {
 
     data.push(`Bill No : ${bill.billNumber}\n`);
     data.push(`Date    : ${this.formatDate(bill.saleDate)}\n`);
-    data.push(`Customer: ${bill.customerName || 'Walk-In'}\n`);
+    if (bill.customerName) {
+      data.push(`Customer: ${bill.customerName}\n`);
+    }
 
     data.push(this.separator(layout));
 
@@ -81,7 +91,16 @@ export class ReceiptFormatterService {
     // ITEMS
     // =========================
 
+    // Make item headings bold on 80mm
+    if (is80mm) {
+      data.push('\x1B\x45\x01');
+    }
+
     data.push(this.formatItemHeader(layout));
+
+    if (is80mm) {
+      data.push('\x1B\x45\x00');
+    }
 
     data.push(this.separator(layout));
 
@@ -99,7 +118,6 @@ export class ReceiptFormatterService {
 
     data.push(this.formatTotalRow('Subtotal', subtotal, layout));
 
-    // GST values come directly from the persisted bill.
     if (gstPercentage > 0) {
       const halfGstPercentage = gstPercentage / 2;
 
@@ -108,7 +126,6 @@ export class ReceiptFormatterService {
       data.push(this.formatTotalRow(`CGST @ ${halfGstPercentage}%`, cgstAmount, layout));
     }
 
-    // Show round-off only when there is an actual difference.
     if (Math.abs(roundOff) >= 0.01) {
       data.push(this.formatTotalRow('Round Off', roundOff, layout));
     }
@@ -119,32 +136,38 @@ export class ReceiptFormatterService {
     // GRAND TOTAL
     // =========================
 
-    data.push('\x1B\x61\x02');
+    if (is80mm) {
+      // 80mm: larger + bold Grand Total
+      data.push('\x1B\x61\x01'); // Center
+      data.push('\x1B\x45\x01'); // Bold ON
+      data.push('\x1D\x21\x11'); // Double width + double height
 
-    data.push('\x1B\x45\x01');
+      data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
 
-    data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
+      data.push('\x1D\x21\x00'); // Normal size
+      data.push('\x1B\x45\x00'); // Bold OFF
+    } else {
+      // 58mm: existing Grand Total style
+      data.push('\x1B\x61\x02'); // Right alignment
+      data.push('\x1B\x45\x01'); // Bold ON
 
-    data.push('\x1B\x45\x00');
+      data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
 
-    // =========================
-    // PAYMENT
-    // =========================
-
-    data.push(`Payment: ${bill.paymentType}\n`);
+      data.push('\x1B\x45\x00'); // Bold OFF
+    }
+    data.push(this.separator(layout));
 
     // =========================
     // FOOTER
     // =========================
 
-    data.push('\n');
-
+    // Center footer text.
     data.push('\x1B\x61\x01');
 
-    data.push('Thank You!\n');
-    data.push('Visit Again\n');
+    data.push('Thank You Visit Again\n');
 
-    // Feed paper
+    // Blank space after the receipt.
+    // Let the printer/driver handle the cut.
     data.push('\n\n\n');
 
     return data;

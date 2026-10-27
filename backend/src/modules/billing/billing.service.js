@@ -1,6 +1,7 @@
 const Billing = require('./billing.model');
 const Product = require('../products/product.model');
 const Owner = require('../owner/owner.model');
+const Counter = require('./counter.model');
 
 /**
  * Round money to 2 decimal places
@@ -10,20 +11,69 @@ const roundMoney = (value) => {
 };
 
 /**
- * Generate Bill Number
+ * Generate Continuous Bill Number
+ *
+ * First bill starts at 1000.
+ *
+ * If the counter does not exist, create it with 1000.
+ * For every subsequent bill, atomically increment the counter.
+ *
+ * This works automatically on a fresh client installation.
  */
-const generateBillNumber = () => {
-  const now = new Date();
+const generateBillNumber = async () => {
+  /**
+   * Check whether the counter already exists.
+   */
+  const existingCounter = await Counter.findById('billNumber');
 
-  const year = String(now.getFullYear()).slice(-2);
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
+  /**
+   * Fresh database:
+   * Create the first bill number as 1000.
+   */
+  if (!existingCounter) {
+    try {
+      await Counter.create({
+        _id: 'billNumber',
+        sequence: 1000,
+      });
 
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
+      return '1000';
+    } catch (error) {
+      /**
+       * Another bill request may have created the counter
+       * at exactly the same time.
+       *
+       * In that case, continue and increment the existing counter.
+       */
+      if (error.code !== 11000) {
+        throw error;
+      }
+    }
+  }
 
-  return `${year}${month}${day}${hours}${minutes}${seconds}`;
+  /**
+   * Existing counter:
+   * Atomically generate the next bill number.
+   */
+  const counter = await Counter.findOneAndUpdate(
+    {
+      _id: 'billNumber',
+    },
+    {
+      $inc: {
+        sequence: 1,
+      },
+    },
+    {
+      new: true,
+    },
+  );
+
+  if (!counter) {
+    throw new Error('Unable to generate bill number.');
+  }
+
+  return String(counter.sequence);
 };
 
 /**
@@ -182,7 +232,7 @@ const createBill = async (billData) => {
     // GENERATE BILL NUMBER
     // =========================
 
-    const billNumber = generateBillNumber();
+    const billNumber = await generateBillNumber();
 
     // =========================
     // CREATE BILL
