@@ -1,6 +1,6 @@
 {
   "name": "customer-billing-ui",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
@@ -47,7 +47,7 @@
   },
   "build": {
     "appId": "com.customerbilling.app",
-    "productName": "Customer Billing",
+    "productName": "AshRaya Software Solutions",
     "directories": {
       "output": "release"
     },
