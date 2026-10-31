@@ -38,9 +38,10 @@ export class ReceiptFormatterService {
     data.push('\x1B\x40');
 
     // =========================
-    // HEADER
+    // CUSTOMER RECEIPT
     // =========================
 
+    // HEADER
     data.push('\x1B\x61\x01');
 
     if (owner?.shopName) {
@@ -73,13 +74,94 @@ export class ReceiptFormatterService {
 
     data.push(this.separator(layout));
 
-    // =========================
     // BILL DETAILS
-    // =========================
+    data.push(...this.formatBillDetails(bill, layout, is80mm));
 
+    // TOTALS
     data.push('\x1B\x61\x00');
 
-    data.push(`Bill No : ${bill.billNumber}\n`);
+    if (owner.includeGst) {
+      data.push(this.formatTotalRow('Subtotal', subtotal, layout));
+    }
+
+    if (gstPercentage > 0) {
+      const halfGstPercentage = gstPercentage / 2;
+
+      data.push(this.formatTotalRow(`SGST @ ${halfGstPercentage}%`, sgstAmount, layout));
+
+      data.push(this.formatTotalRow(`CGST @ ${halfGstPercentage}%`, cgstAmount, layout));
+    }
+
+    if (Math.abs(roundOff) >= 0.01) {
+      data.push(this.formatTotalRow('Round Off', roundOff, layout));
+    }
+
+    data.push(this.separator(layout));
+
+    // GRAND TOTAL
+    if (is80mm) {
+      data.push('\x1B\x61\x01');
+      data.push('\x1B\x45\x01');
+
+      data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
+
+      data.push('\x1D\x21\x00');
+      data.push('\x1B\x45\x00');
+    } else {
+      data.push('\x1B\x61\x02');
+      data.push('\x1B\x45\x01');
+
+      data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
+
+      data.push('\x1B\x45\x00');
+    }
+
+    data.push(this.separator(layout));
+
+    // FOOTER
+    data.push('\x1B\x61\x01');
+
+    data.push('Thank You, Visit Again\n');
+    data.push('\n\n\n');
+
+    // CUT CUSTOMER RECEIPT
+    data.push('\x1D\x56\x00');
+
+    // =========================
+    // ORDER COPY
+    // =========================
+
+    if (owner?.printOrderCopy) {
+      data.push('\x1B\x40');
+
+      // CENTER
+      data.push('\x1B\x61\x01');
+
+      data.push('ORDER COPY\n');
+
+      data.push(this.separator(layout));
+
+      // ORDER DETAILS
+      data.push(...this.formatBillDetails(bill, layout, is80mm));
+
+      // CUT ORDER COPY
+      data.push('\n\n\n');
+      data.push('\x1D\x56\x00');
+    }
+
+    return data;
+  }
+
+  private formatBillDetails(bill: Billing, layout: ReceiptLayout, is80mm: boolean): string[] {
+    const data: string[] = [];
+
+    // BILL DETAILS
+    data.push('\x1B\x61\x00');
+
+    data.push('\x1B\x45\x01'); // Bold ON
+    data.push(`BILL NO: ${bill.billNumber}\n`);
+    data.push('\x1B\x45\x00'); // Bold OFF
+
     data.push(`Date    : ${this.formatDate(bill.saleDate)}\n`);
 
     if (bill.customerName) {
@@ -88,11 +170,7 @@ export class ReceiptFormatterService {
 
     data.push(this.separator(layout));
 
-    // =========================
     // ITEMS
-    // =========================
-
-    // Make item headings bold on 80mm
     if (is80mm) {
       data.push('\x1B\x45\x01');
     }
@@ -110,70 +188,6 @@ export class ReceiptFormatterService {
     }
 
     data.push(this.separator(layout));
-
-    // =========================
-    // TOTALS
-    // =========================
-
-    data.push('\x1B\x61\x00');
-
-    data.push(this.formatTotalRow('Subtotal', subtotal, layout));
-
-    if (gstPercentage > 0) {
-      const halfGstPercentage = gstPercentage / 2;
-
-      data.push(this.formatTotalRow(`SGST @ ${halfGstPercentage}%`, sgstAmount, layout));
-
-      data.push(this.formatTotalRow(`CGST @ ${halfGstPercentage}%`, cgstAmount, layout));
-    }
-
-    if (Math.abs(roundOff) >= 0.01) {
-      data.push(this.formatTotalRow('Round Off', roundOff, layout));
-    }
-
-    data.push(this.separator(layout));
-
-    // =========================
-    // GRAND TOTAL
-    // =========================
-
-    if (is80mm) {
-      // 80mm: larger + bold Grand Total
-      data.push('\x1B\x61\x01'); // Center
-      data.push('\x1B\x45\x01'); // Bold ON
-      data.push('\x1D\x21\x11'); // Double width + double height
-
-      data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
-
-      data.push('\x1D\x21\x00'); // Normal size
-      data.push('\x1B\x45\x00'); // Bold OFF
-    } else {
-      // 58mm: existing Grand Total style
-      data.push('\x1B\x61\x02'); // Right alignment
-      data.push('\x1B\x45\x01'); // Bold ON
-
-      data.push(`GRAND TOTAL: Rs.${grandTotal}\n`);
-
-      data.push('\x1B\x45\x00'); // Bold OFF
-    }
-
-    data.push(this.separator(layout));
-
-    // =========================
-    // FOOTER
-    // =========================
-
-    // Center footer text.
-    data.push('\x1B\x61\x01');
-
-    data.push('Thank You Visit Again\n');
-
-    // Center marker at the very end of the bill.
-    data.push('!!!!!!!!!!!!!!!!\n');
-
-    // Blank space after the receipt.
-    // Printer handles the automatic cut.
-    data.push('\n\n\n');
 
     return data;
   }
@@ -215,7 +229,12 @@ export class ReceiptFormatterService {
 
     const amount = this.center(this.formatAmount(item.totalPrice), layout.amountWidth);
 
-    return [`${this.padRight(name, layout.itemNameWidth)}${quantity}${price}${amount}\n`];
+    return [
+      '\x1B\x45\x01', // Bold ON
+      this.padRight(name, layout.itemNameWidth),
+      '\x1B\x45\x00', // Bold OFF
+      `${quantity}${price}${amount}\n`,
+    ];
   }
 
   // =========================

@@ -47,6 +47,7 @@ export class OwnerProfileComponent implements OnInit {
     stockManagement: [false, Validators.required],
     flexiblePricing: [false],
     includeGst: [false],
+    printOrderCopy: [false],
 
     gstPercentage: [{ value: 0, disabled: true }, [Validators.min(0), Validators.max(100)]],
   });

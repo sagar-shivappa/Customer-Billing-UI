@@ -58,6 +58,11 @@ const ownerSchema = new mongoose.Schema({
     default: '',
   },
 
+  printOrderCopy: {
+    type: Boolean,
+    default: false,
+  },
+
   // Software license expiry date.
   // Stored as YYYY-MM-DD because this is a date-only value.
   softwareExpiryDate: {

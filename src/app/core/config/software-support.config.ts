@@ -27,5 +27,5 @@ export const SOFTWARE_SUPPORT_CONFIG: SoftwareSupportConfig = {
 
   supportEmail: 'shivappasagar@gmail.com',
 
-  logoPath: 'images/logo.jpg',
+  logoPath: 'images/logo.png',
 };

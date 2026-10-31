@@ -20,6 +20,7 @@ export class OwnerProfileService {
     softwareExpiryDate: '',
     flexiblePricing: false,
     passwordConfigured: false,
+    printOrderCopy: false,
   });
   http = inject(HttpClient);
 

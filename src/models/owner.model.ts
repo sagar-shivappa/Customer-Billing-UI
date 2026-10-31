@@ -12,6 +12,7 @@ export interface OwnerProfile {
   softwareExpiryDate?: string;
   flexiblePricing: boolean;
   passwordConfigured?: boolean;
+  printOrderCopy: boolean;
 }
 
 export interface OwnerProfileResponse {
